@@ -79,5 +79,3 @@ export async function before(m, { conn, participants, groupMetadata }) {
         if (chat.byeAudio) await sendAudioWelcome(chat.byeAudio)
     }
 }
-
-Este tbm
