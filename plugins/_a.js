@@ -1,71 +1,41 @@
 import axios from 'axios';
-import FormData from 'form-data';
-import fs from 'fs';
+import uploadImage from "../lib/uploadFile.js";
 
-let handler = async (m, { conn, usedPrefix, command }) => {
-    let q = m.quoted ? m.quoted : m;
-    let mime = (q.msg || q).mimetype || "";
+let handler = async (m, { conn, usedPrefix, command, text }) => {
+  let q = m.quoted ? m.quoted : m;
+  let mime = (q.msg || q).mimetype || "";
+  if (!mime) return m.reply("Fotonya Mana?");
+  if (!/image\/(jpe?g|png)/.test(mime))
+    return m.reply(`Tipe ${mime} tidak didukung!`);
+  let ephemeral =
+    conn.chats[m.chat]?.metadata?.ephemeralDuration ||
+    conn.chats[m.chat]?.ephemeralDuration ||
+    false;
 
-    if (!/image/.test(mime) && mime !== "image/webp") {
-        return m.reply(`Reponde a una imagen von el comando: *#${usedPrefix + command}*`);
-    }
+  let img = await q.download();
+  let files = await uploadImage(img);
+  let removebg = await axios.get(`https://widipe.com/removebg?url=${files}`)
 
-    if (mime === "image/webp") {
-        if (q.isAnimated) return m.reply("❌ Los stickers GIF no se pueden eliminar del fondo.");
-    }
 
-    await conn.sendMessage(m.chat, { react: { text: "⏳", key: m.key } });
-
-    let media = await q.download();
-    let result = await removeBg(media);
-
-    if (!result?.data?.cutoutUrl) {
-        await conn.sendMessage(m.chat, { react: { text: "❌", key: m.key } });
-        return m.reply("No se pudieron recuperar los resultados de la eliminación del fondo!");
-    }
-
-    let buffer = await conn.getFile(result.data.cutoutUrl).then(a => a.data);
-
-    await conn.sendMessage(m.chat, { react: { text: "✔️", key: m.key } });
-
-    conn.sendFile(m.chat, buffer, 'removebg.png', '✔️ Fondo removido exitosamente !', m);
-};
-
-handler.help = ['removebg', 'rmbg'];
-handler.tags = ['tools'];
-handler.command = ['removebg', 'rmbg']
-handler.limit = true;
-export default handler;
-
-async function removeBg(buffer) {
-    try {
-        const form = new FormData();
-        form.append('file', buffer, {
-            filename: 'image.jpg',
-            contentType: 'image/jpeg'
-        });
-
-        const { data } = await axios.post(
-            'https://removebg.one/api/predict/v2',
-            form,
-            {
-                headers: {
-                    ...form.getHeaders(),
-                    'user-agent': 'Mozilla/5.0 (Linux; Android 10)',
-                    accept: 'application/json, text/plain, */*',
-                    'sec-ch-ua': '"Chromium";v="139", "Not;A=Brand";v="99"',
-                    platform: 'PC',
-                    'sec-ch-ua-platform': '"Android"',
-                    origin: 'https://removebg.one',
-                    referer: 'https://removebg.one/upload'
-                },
-                maxBodyLength: Infinity,
-                maxContentLength: Infinity
-            }
+      try {
+        let out = removebg.data.result.urls
+        await conn.sendMessage(
+          m.chat,
+          {
+            image: { url: out },
+            fileName: "removebg.png",
+            mimetype: "image/png",
+            caption: "*DONE (≧ω≦)ゞ*",
+          },
+          { quoted: m, ephemeralExpiration: ephemeral },
         );
-
-        return data;
-    } catch {
-        return null;
-    }
-}
+      } catch (e) {
+        console.error(e);
+        m.reply('Terjadi kesalahan saat menghapus latar belakang.');
+      }
+};
+handler.help = ["removebg", "changebg"];
+handler.tags = ["tools", "premium"];
+handler.command = /^(removebg|changebg)$/i;
+handler.premium = true; handler.error = 0
+export default handler;
