@@ -60,8 +60,8 @@ ${estado}
   }, { quoted: m })
 }
 
-handler.help = ['compatibilidad <nombre/@/responder>']
+handler.help = ['love <@/responder>']
 handler.tags = ['love']
-handler.command = /^(compatibilidad|love10)$/i
+handler.command = /^(love|love10)$/i
 handler.group = true
 export default handler
