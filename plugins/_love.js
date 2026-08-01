@@ -1,30 +1,31 @@
 let handler = async (m, { conn, command }) => {
-  let who = m.mentionedJid && m.mentionedJid[0]
-        ? m.mentionedJid[0]
-          : m.quoted
-        ? m.quoted.sender
-          : m.sender;
+  // ARREGLO: Primero mención, luego citado, si no hay nada = error
+  let who = m.mentionedJid[0] || m.quoted?.sender || null
+
+  if (!who) return m.reply(`💕 *Uso:*.love @usuario\n*Etiqueta a la persona que quieres medir* 🥺`)
 
   let yo = m.sender
+  if (who === yo) return m.reply(`🌸 *A ti mismo te amas mucho, pero mejor mide con alguien más*`)
+
   let nameYo = await conn.getName(yo);
   let nameUser = await conn.getName(who);
   let porcentaje = Math.floor(Math.random() * 101);
 
-  if(command == 'love'){
+  if(command == 'love' || command == 'amor' || command == 'compatibilidad'){
     let frase = porcentaje < 30
-    ? '🌸 *NOS CUIDAMOS COMO AMIGOS*'
+   ? '🌸 *NOS CUIDAMOS COMO AMIGOS*'
       : porcentaje < 60
-    ? '💌 *HAY ALGO BONITO ENTRE USTEDES*'
+   ? '💌 *HAY ALGO BONITO ENTRE USTEDES*'
       : porcentaje < 85
-    ? '🤍 *SE HACEN MUCHO BIEN JUNTOS*'
+   ? '🤍 *SE HACEN MUCHO BIEN JUNTOS*'
       : '💍 *ESTÁN HECHOS EL UNO PARA EL OTRO*'
 
     let detallito = porcentaje < 30
-    ? 'A veces el mejor amor es el de amigos 💫'
+   ? 'A veces el mejor amor es el de amigos 💫'
       : porcentaje < 60
-    ? 'Denle tiempo... las cosas bonitas florecen lento 🥺'
+   ? 'Denle tiempo... las cosas bonitas florecen lento 🥺'
       : porcentaje < 85
-    ? 'Se nota que se quieren mucho. Cuídense 🤍'
+   ? 'Se nota que se quieren mucho. Cuídense 🤍'
       : 'Prométanse ser felices juntos siempre ✨'
 
     await conn.sendMessage(m.chat, {
