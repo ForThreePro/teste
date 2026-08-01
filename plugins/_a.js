@@ -1,79 +1,49 @@
 import fetch from 'node-fetch'
 import FormData from 'form-data'
-import sharp from 'sharp'
 
 // PON TUS 5 KEYS NUEVAS AQUÍ
 const APIS = [
-    'bzCVvJUG2sRhDB3gwDZEZfDp', // remove.bg 1
-    'vfFJNa8MThy7J1EVKvPSv9eo', // remove.bg 2
-    'sarB51ABXcvLMRpQFkE1QA4f', // remove.bg 3
-    'MJ1CaPUipeqyVC7HW8HqkXJE', // remove.bg 4
-    '4AvZ9znyHsMFveZ4yBPW4T9z' // remove.bg 5
+    'bzCVvJUG2sRhDB3gwDZEZfDp',
+    'vfFJNa8MThy7J1EVKvPSv9eo',
+    'sarB51ABXcvLMRpQFkE1QA4f',
+    'MJ1CaPUipeqyVC7HW8HqkXJE',
+    '4AvZ9znyHsMFveZ4yBPW4T9z'
 ]
 
 let apiIndex = 0
-let procesos = new Map() // guarda la imagen temporal
 
 let handler = async (m, { conn, usedPrefix, command, args }) => {
-    let q = m.quoted? m.quoted : m
+    try {
+        let q = m.quoted? m.quoted : m
+        let mime = (q.msg || q).mimetype || ''
 
-    // PASO 1: Si responde a imagen, muestra botones
-    if (q.mimetype && q.mimetype.startsWith('image/') &&!args[0]) {
+        if (!mime ||!mime.startsWith('image/'))
+            return m.reply(`*Uso:* Responde a una imagen con *${usedPrefix + command} hd* o *${usedPrefix + command} preview*`)
+
+        let modo = args[0] || 'hd' // por defecto HD
+        if (!['hd','preview'].includes(modo)) modo = 'hd'
+
+        await m.react('⏳')
         let buffer = await q.download()
-        let id = Date.now().toString()
-        procesos.set(id, buffer) // guardamos la imagen
+        let imgBuffer = await removeBg(buffer, modo)
 
-        let { width, height } = await sharp(buffer).metadata()
+        let tipoMsg = modo === 'hd'? '🔥 HD' : '💎 Preview Gratis'
 
-        return conn.sendButton(m.chat, `
-╭─「 🎨 *REMOVE BG PRO* 」
-│
-│ *Resolución:* ${width}x${height}px
-│ *Elige la calidad:*
-│
-│ 🔥 *HD*: Tamaño original | Gasta 1 crédito
-│ 💎 *Preview*: 625x400px | Gratis
-│
-╰─────────────────`,
-        'Elige un modo',
-        [['🔥 HD', `.removebg hd ${id}`], ['💎 Preview', `.removebg preview ${id}`]],
-        m)
+        // ENVIAR COMO DOCUMENTO PARA QUE NO PIERDA TRANSPARENCIA
+        await conn.sendMessage(m.chat, {
+            document: imgBuffer,
+            fileName: `nobg_${Date.now()}.png`,
+            mimetype: 'image/png',
+            caption: `✅ *Fondo eliminado*\n*Modo:* ${tipoMsg}\n*API:* #${apiIndex}/5`
+        }, { quoted: m })
+
+        await m.react('✅')
+
+    } catch (error) {
+        console.error(error)
+        await m.react('❌')
+        m.reply(`❌ *ERROR:* ${error.message}`)
     }
-
-    // PASO 2: Si presiona botón, procesa
-    if (args[0] && args[1]) {
-        let modo = args[0] // hd o preview
-        let id = args[1]
-        let buffer = procesos.get(id)
-
-        if (!buffer) return m.reply('❌ La imagen expiró. Vuelve a responderla.')
-        procesos.delete(id)
-
-        try {
-            await m.react('⏳')
-            let imgBuffer = await removeBg(buffer, modo)
-            await m.react('✅')
-
-            let tipoMsg = modo === 'auto'? '🔥 HD Normal' : '💎 Preview Gratis'
-            let caption = `╭─「 ✅ *FONDO ELIMINADO* 」
-│
-│ *Modo:* ${tipoMsg}
-│ *API Usada:* #${apiIndex}/5
-│
-╰─────────────────`
-
-            await conn.sendFile(m.chat, imgBuffer, `nobg_${Date.now()}.png`, caption, m)
-
-        } catch (error) {
-            console.error(error)
-            await m.react('❌')
-            m.reply(`❌ ${error.message}`)
-        }
-        return
-    }
-
-    // Si no responde a imagen
-    return m.reply(`Responde a una imagen con: *${usedPrefix + command}*`)
 }
 
 async function removeBg(buffer, modoElegido) {
@@ -99,12 +69,13 @@ async function removeBg(buffer, modoElegido) {
                 apiIndex = (apiIndex + 1) % APIS.length
                 return result
             }
+            if(res.status === 402) console.log(`Key ${apiIndex + 1} sin créditos`)
         } catch(e){}
 
         apiIndex = (apiIndex + 1) % APIS.length
         intentos++
     }
-    throw new Error(`Todas las 5 keys están sin créditos en modo ${modo}`)
+    throw new Error(`Todas las 5 keys están sin créditos`)
 }
 
 handler.help = ['removebg']
