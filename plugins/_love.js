@@ -1,57 +1,66 @@
-let handler = async (m, { conn, command }) => {
-  let users = m.mentionedJid || []
-  if(!users.length && m.quoted) users.push(m.quoted.sender)
-  if(!users.length && m.text) {
-    let match = m.text.match(/@(\d+)/g)
-    if(match) users = match.map(v => v.replace('@','') + '@s.whatsapp.net')
+let handler = async (m, { conn, command, text }) => {
+  // 1. Buscar a quien medir
+  let who = m.mentionedJid[0] || m.quoted?.sender
+  if (!who && text) {
+    let match = text.match(/@(\d+)/)
+    if (match) who = match[1] + '@s.whatsapp.net'
   }
 
-  let who = users[0]
   let yo = m.sender
+  if (!who) return m.reply(`💕 *Uso:*.compatibilidad @usuario\n*Ejemplo:*.compatibilidad @Romi2 🥺`)
+  if (who === yo) return m.reply(`🌸 *Contigo mismo tienes 10/10 de amor propio*`)
 
-  if (!who) return m.reply(`💕 *Uso:*.love @usuario\n*Etiqueta a la persona que quieres medir* 🥺`)
-  if (who === yo) return m.reply(`🌸 *A ti mismo te amas mucho, pero mejor mide con alguien más*`)
+  // 2. Generar del 1 al 10
+  let compatibilidad = Math.floor(Math.random() * 10) + 1;
+  let corazones = '❤️'.repeat(compatibilidad) + '🖤'.repeat(10 - compatibilidad)
 
-  let porcentaje = Math.floor(Math.random() * 101);
-
-  // FORZAMOS A QUE CARGUE LOS NOMBRES
-  let [nameYo, nameWho] = await Promise.all([
-    conn.getName(yo),
-    conn.getName(who)
-  ])
-  
-  // Si no hay nombre, usamos el pushName o el numero
-  nameYo = nameYo || yo.split('@')[0]
-  nameWho = nameWho || who.split('@')[0].replace(/[^0-9]/g, '')
-
-  if(command == 'love' || command == 'amor' || command == 'compatibilidad'){
-    let frase = porcentaje < 30? '🌸 *NOS CUIDAMOS COMO AMIGOS*' : porcentaje < 60? '💌 *HAY ALGO BONITO ENTRE USTEDES*' : porcentaje < 85? '🤍 *SE HACEN MUCHO BIEN JUNTOS*' : '💍 *ESTÁN HECHOS EL UNO PARA EL OTRO*'
-    let detallito = porcentaje < 30? 'A veces el mejor amor es el de amigos 💫' : porcentaje < 60? 'Denle tiempo... las cosas bonitas florecen lento 🥺' : porcentaje < 85? 'Se nota que se quieren mucho. Cuídense 🤍' : 'Prométanse ser felices juntos siempre ✨'
-
-    // CLAVE: Ponemos @ + numero limpio y pasamos mentionedJid
-    let txt = `ᯇ 💕 𝗖𝗨𝗣𝗜𝗗𝗢 𝗕𝗢𝗧 💕 ୧
-
-꒰ ◞⁺⊹ ．@${yo.split('@')[0]} y @${who.split('@')[0].replace(/[^0-9]/g, '')}
-
-*Compatibilidad:* *${porcentaje}%* 💘
-*${nameYo}* y *${nameWho}*
-
-${frase}
-
-──愛 *𝗠𝗘𝗡𝗦𝗔𝗝𝗜𝗧𝗢* ╏ 🕊️
-"${detallito}"
-
-> *Que el amor los encuentre bonito* 🌙`
-
-    await conn.sendMessage(m.chat, {
-      text: txt,
-      mentions: [yo, who] // ESTO OBLIGA A WHATSAPP A PINTAR LOS @
-    }, { quoted: m })
+  // 3. Frases según el puntaje
+  let estado, consejo
+  if(compatibilidad <= 3){
+    estado = '🌧️ *BAJA COMPATIBILIDAD*'
+    consejo = 'Mejor como amigos. No se fuercen 🥺'
+  } else if(compatibilidad <= 6){
+    estado = '⛅ *COMPATIBILIDAD MEDIA*'
+    consejo = 'Hay química, pero necesitan hablar más 💬'
+  } else if(compatibilidad <= 9){
+    estado = '☀️ *ALTA COMPATIBILIDAD*'
+    consejo = 'Se ven muy bien juntos. Denle una oportunidad 🤍'
+  } else {
+    estado = '🔥 *ALMAS GEMELAS*'
+    consejo = 'Están hechos el uno para el otro. No lo suelten 💍'
   }
+
+  // 4. Sacar nombres
+  let nameYo = await conn.getName(yo) || 'Tú'
+  let nameWho = await conn.getName(who) || 'Desconocido'
+  let numYo = yo.split('@')[0]
+  let numWho = who.split('@')[0].replace(/[^0-9]/g, '')
+
+  // 5. Mensaje final
+  let txt = `ᯇ 💘 𝗖𝗢𝗠𝗣𝗔𝗧𝗜𝗕𝗜𝗟𝗜𝗗𝗔𝗗 𝗕𝗢𝗧 💘 ୧
+
+꒰ ◞⁺⊹ ．@${numYo} y @${numWho}
+
+*${nameYo}* + *${nameWho}*
+
+*Puntaje:* *${compatibilidad}/10*
+${corazones}
+
+${estado}
+
+──愛 *𝗖𝗢𝗡𝗦𝗘𝗝𝗢 𝗗𝗘𝗟 𝗖𝗨𝗣𝗜𝗗𝗢* ╏ 🕊️
+"${consejo}"
+
+> *El destino está en sus manos* ✨`
+
+  await conn.sendMessage(m.chat, {
+    text: txt,
+    mentions: [yo, who] // ESTO HACE QUE LOS @ SE PINTEN
+  }, { quoted: m })
 }
 
-handler.help = ['love *@usuario*']
+handler.help = ['compatibilidad *@usuario*']
 handler.tags = ['love']
-handler.command = /^(love|amor|compatibilidad)$/i
+handler.command = /^(compatibilidad|love10|love1-10)$/i
 handler.group = true
 export default handler
