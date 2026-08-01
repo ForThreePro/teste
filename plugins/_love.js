@@ -1,12 +1,20 @@
 let handler = async (m, { conn, command }) => {
-  let who = m.mentionedJid[0] || m.quoted?.sender
-  if (!who && m.text) {
-    let match = m.text.match(/@(\d+)/)
-    if (match) who = match[1] + '@s.whatsapp.net'
+  // 1. Primero busca menciones
+  let users = m.mentionedJid || []
+
+  // 2. Si no hay, busca si respondió a alguien
+  if(!users.length && m.quoted) users.push(m.quoted.sender)
+
+  // 3. Si no hay, busca en el texto @123456
+  if(!users.length && m.text) {
+    let match = m.text.match(/@(\d+)/g)
+    if(match) users = match.map(v => v.replace('@','') + '@s.whatsapp.net')
   }
 
-  if (!who) return m.reply(`💕 *Uso:*.love @usuario\n*Etiqueta a la persona que quieres medir* 🥺`)
+  let who = users[0] // agarramos el primero que menciono
   let yo = m.sender
+
+  if (!who) return m.reply(`💕 *Uso:*.love @usuario\n*Etiqueta a la persona que quieres medir* 🥺`)
   if (who === yo) return m.reply(`🌸 *A ti mismo te amas mucho, pero mejor mide con alguien más*`)
 
   let porcentaje = Math.floor(Math.random() * 101);
@@ -15,7 +23,6 @@ let handler = async (m, { conn, command }) => {
     let frase = porcentaje < 30? '🌸 *NOS CUIDAMOS COMO AMIGOS*' : porcentaje < 60? '💌 *HAY ALGO BONITO ENTRE USTEDES*' : porcentaje < 85? '🤍 *SE HACEN MUCHO BIEN JUNTOS*' : '💍 *ESTÁN HECHOS EL UNO PARA EL OTRO*'
     let detallito = porcentaje < 30? 'A veces el mejor amor es el de amigos 💫' : porcentaje < 60? 'Denle tiempo... las cosas bonitas florecen lento 🥺' : porcentaje < 85? 'Se nota que se quieren mucho. Cuídense 🤍' : 'Prométanse ser felices juntos siempre ✨'
 
-    // SACAMOS SOLO EL NUMERO SIN @s.whatsapp.net
     let jidYo = yo.split('@')[0]
     let jidWho = who.split('@')[0]
 
@@ -34,7 +41,7 @@ ${frase}
 
     await conn.sendMessage(m.chat, {
       text: txt,
-      mentions: [yo, who] // ESTO ES LO IMPORTANTE
+      mentions: [yo, who] // <- aquí pasamos los 2 para que los pinte
     }, { quoted: m })
   }
 }
