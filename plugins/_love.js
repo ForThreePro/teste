@@ -1,6 +1,12 @@
 let handler = async (m, { conn, command }) => {
-  // ARREGLO: Primero mención, luego citado, si no hay nada = error
-  let who = m.mentionedJid[0] || m.quoted?.sender || null
+  // ARREGLO TOTAL: agarra mención, citado, o el primer @ del texto
+  let who = m.mentionedJid[0] || m.quoted?.sender
+
+  // Si no hay nada de arriba, intenta sacar del texto "@123456"
+  if (!who && m.text) {
+    let match = m.text.match(/@(\d+)/)
+    if (match) who = match[1] + '@s.whatsapp.net'
+  }
 
   if (!who) return m.reply(`💕 *Uso:*.love @usuario\n*Etiqueta a la persona que quieres medir* 🥺`)
 
@@ -13,19 +19,19 @@ let handler = async (m, { conn, command }) => {
 
   if(command == 'love' || command == 'amor' || command == 'compatibilidad'){
     let frase = porcentaje < 30
-   ? '🌸 *NOS CUIDAMOS COMO AMIGOS*'
+  ? '🌸 *NOS CUIDAMOS COMO AMIGOS*'
       : porcentaje < 60
-   ? '💌 *HAY ALGO BONITO ENTRE USTEDES*'
+  ? '💌 *HAY ALGO BONITO ENTRE USTEDES*'
       : porcentaje < 85
-   ? '🤍 *SE HACEN MUCHO BIEN JUNTOS*'
+  ? '🤍 *SE HACEN MUCHO BIEN JUNTOS*'
       : '💍 *ESTÁN HECHOS EL UNO PARA EL OTRO*'
 
     let detallito = porcentaje < 30
-   ? 'A veces el mejor amor es el de amigos 💫'
+  ? 'A veces el mejor amor es el de amigos 💫'
       : porcentaje < 60
-   ? 'Denle tiempo... las cosas bonitas florecen lento 🥺'
+  ? 'Denle tiempo... las cosas bonitas florecen lento 🥺'
       : porcentaje < 85
-   ? 'Se nota que se quieren mucho. Cuídense 🤍'
+  ? 'Se nota que se quieren mucho. Cuídense 🤍'
       : 'Prométanse ser felices juntos siempre ✨'
 
     await conn.sendMessage(m.chat, {
