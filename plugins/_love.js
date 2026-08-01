@@ -2,26 +2,28 @@ let handler = async (m, { conn, command, text }) => {
   let yo = m.sender
   let who = null
   
-  // 1. Si respondió a un mensaje
+  // 1. RESPONDIENDO - más seguro
   if(m.quoted) who = m.quoted.sender
   
-  // 2. Si mencionó a alguien
+  // 2. MENCION REAL - cuando tocas @ y eliges de la lista
   else if(m.mentionedJid && m.mentionedJid[0]) who = m.mentionedJid[0]
   
-  // 3. Si escribió un nombre:.compatibilidad Romi2
+  // 3. TEXTO - cuando escribes.compatibilidad Romi2 o.compatibilidad @Romi2
   else if(text) {
-    let nombreBuscado = text.replace(command, '').trim().toLowerCase()
+    let nombreBuscado = text.replace(command, '').replace('@','').trim().toLowerCase()
     if(!nombreBuscado) return m.reply(`💕 *Uso:*.compatibilidad @usuario\n*O*.compatibilidad Romi2\n*O responde a su mensaje* 🥺`)
     
     let group = await conn.groupMetadata(m.chat)
     let participante = group.participants.find(p => {
       let nombre = conn.getName(p.id) || p.id.split('@')[0]
-      return nombre.toLowerCase().includes(nombreBuscado)
+      let numero = p.id.split('@')[0]
+      return nombre.toLowerCase().includes(nombreBuscado) || numero.includes(nombreBuscado)
     })
     if(participante) who = participante.id
+    else return m.reply(`😿 *No encontré a "${nombreBuscado}" en el grupo*\nResponde a su mensaje o etiquétalo de la lista tocando @`)
   }
 
-  if (!who) return m.reply(`💕 *No te encontré*\nEtiqueta, responde o escribe el nombre exacto 🥺`)
+  if (!who) return m.reply(`💕 *Uso:*.compatibilidad @usuario\n*O responde a su mensaje* 🥺`)
   if (who === yo) return m.reply(`🌸 *Contigo mismo tienes 10/10 de amor propio*`)
 
   let compatibilidad = Math.floor(Math.random() * 10) + 1;
@@ -33,7 +35,6 @@ let handler = async (m, { conn, command, text }) => {
   else if(compatibilidad <= 9){ estado = '☀️ *ALTA*'; consejo = 'Se ven bien juntos 🤍' }
   else { estado = '🔥 *ALMAS GEMELAS*'; consejo = 'No lo suelten 💍' }
 
-  // Forzar que cargue nombres
   let nameYo = await conn.getName(yo) || 'Tú'
   let nameWho = await conn.getName(who) || 'Usuario'
   let numYo = yo.split('@')[0]
@@ -57,12 +58,12 @@ ${estado}
 
   await conn.sendMessage(m.chat, {
     text: txt,
-    mentions: [yo, who] // OBLIGA A WHATSAPP A PINTAR
+    mentions: [yo, who]
   }, { quoted: m })
 }
 
-handler.help = ['love <nombre/@/responder>']
+handler.help = ['compatibilidad <nombre/@/responder>']
 handler.tags = ['love']
-handler.command = /^(love|love10)$/i
+handler.command = /^(compatibilidad|love10)$/i
 handler.group = true
 export default handler
