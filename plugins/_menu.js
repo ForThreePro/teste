@@ -23,6 +23,11 @@ sticker: 'STICKER',
 
 // Emojis random para que cambien cada.menu
 const EMOJIS_RANDOM = ['🔥','⚡','💥','🐉','🌟','💫','🌙','☄️','🌈','🍓','👑','💀','⚔️','🛡️','🌌']
+const ICONOS_CATEGORIA = {
+config: '⚙️', owner: '👑', fun: '😈', ff: '🔫', buscadores: '🔍',
+descargas: '📥', grupo: '⚔️', grupos: '🛡️', gacha: '👥', ia: '🤖',
+info: 'ℹ️', sticker: '🎨', main: '🌟', tools: '🧰', sorteos: '🎁', joda: '😂'
+}
 
 let handler = async (m, { conn }) => {
 try {
@@ -46,15 +51,16 @@ const totalram = (os.totalmem() / 1024 / 1024 / 1024).toFixed(2)
 const pluginsCount = Object.values(global.plugins || {}).filter(p =>!p?.disabled).length
 const totalUsers = Object.keys(global.db.data.users || {}).length
 
+// AHORA DETECTA TODAS LAS CATEGORIAS
 const byTag = {}
 for (const plugin of Object.values(global.plugins || {})) {
   if (plugin.disabled) continue
   const tags = Array.isArray(plugin.tags)? plugin.tags : (plugin.tags? [plugin.tags] : [])
   const helps = Array.isArray(plugin.help)? plugin.help : (plugin.help? [plugin.help] : [])
   for (const tag of tags) {
-    if (!CATEGORY_META[tag]) continue
-    if (!byTag[tag]) byTag[tag] = new Set()
-    for (const h of helps) if (typeof h === 'string' && h.trim()) byTag[tag].add(h.trim())
+    const t = tag.toLowerCase()
+    if (!byTag[t]) byTag[t] = new Set() // ya no filtra por CATEGORY_META
+    for (const h of helps) if (typeof h === 'string' && h.trim()) byTag[t].add(h.trim())
   }
 }
 
@@ -85,26 +91,23 @@ let menuTexto = `*${eTop} SON GOKU PREM ${eTop}*
 
 `
 
-for (const tag of Object.keys(CATEGORY_META)) {
+// Ordena: primero las que están en CATEGORY_META, luego las nuevas
+const tagsOrdenados = Object.keys(byTag).sort((a, b) => {
+  const aIn = CATEGORY_META[a]? 0 : 1
+  const bIn = CATEGORY_META[b]? 0 : 1
+  return aIn - bIn
+})
+
+for (const tag of tagsOrdenados) {
   const set = byTag[tag]
   if (!set || set.size === 0) continue
   const cmds = [...set].sort()
 
-  let icono = '🔧'
-  if(tag === 'config') icono = '⚙️'
-  if(tag === 'owner') icono = '👑'
-  if(tag === 'fun') icono = '😈'
-  if(tag === 'ff') icono = '🔫'
-  if(tag === 'buscadores') icono = '🔍'
-  if(tag === 'descargas') icono = '📥'
-  if(tag === 'grupo') icono = '⚔️'
-  if(tag === 'grupos') icono = '🛡️'
-  if(tag === 'gacha') icono = '👥'
-  if(tag === 'ia') icono = '🤖'
-  if(tag === 'info') icono = 'ℹ️'
-  if(tag === 'sticker') icono = '🎨'
+  // Nombre bonito: si está en CATEGORY_META lo usa, si no pone el tag en mayúsculas
+  const nombreCat = CATEGORY_META[tag] || tag.toUpperCase()
+  const icono = ICONOS_CATEGORIA[tag] || EMOJIS_RANDOM[Math.floor(Math.random() * EMOJIS_RANDOM.length)]
 
-  menuTexto += `\n╭─「 ${icono} ${CATEGORY_META[tag]} 」─╮\n`
+  menuTexto += `\n╭─「 ${icono} ${nombreCat} 」─╮\n`
   menuTexto += cmds.map(c => `│ *${icono}.${c}*`).join('\n') + '\n'
   menuTexto += `╰─────────────────╯\n`
 }
