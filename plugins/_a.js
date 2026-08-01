@@ -1,7 +1,7 @@
 import fetch from 'node-fetch'
 import FormData from 'form-data'
+import sharp from 'sharp' // NUEVO
 
-// PON EL NUMERO DEL ADMIN AQUÍ
 const ADMIN = '51927174369'
 
 const APIS = [
@@ -31,12 +31,7 @@ let handler = async (m, { conn, usedPrefix, command, args }) => {
         solicitudes.set(id, { buffer, user: m.sender, chat: m.chat })
 
         await conn.sendMessage(ADMIN + '@s.whatsapp.net', {
-            text: `📩 *NUEVA SOLICITUD HD*
-*Usuario:* @${m.sender.split('@')[0]}
-*ID:* ${id}
-
-.aceptarhd ${id} = Aprobar
-.rechazarhd ${id} = Rechazar`,
+            text: `📩 *NUEVA SOLICITUD HD*\n*Usuario:* @${m.sender.split('@')[0]}\n*ID:* ${id}\n\n.aceptarhd ${id} = Aprobar\n.rechazarhd ${id} = Rechazar`,
             mentions: [m.sender]
         })
         return m.reply(`📩 *Solicitud enviada al admin*\nEspera aprobación. ID: ${id}`)
@@ -68,22 +63,25 @@ async function procesar(m, conn, q, modo) {
         await m.react('⏳')
         let buffer = await q.download()
         let imgBuffer = await removeBg(buffer, modo)
+        
+        // CLAVE: Convertir a WEBP con transparencia para que WhatsApp lo respete
+        const webpBuffer = await sharp(imgBuffer)
+            .resize(512, 512, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+            .webp({ lossless: true, alphaQuality: 100 })
+            .toBuffer()
+
         await m.react('✅')
 
-        let tipoMsg = modo === 'hd'? '🔥 HD Aprobado' : '💎 Preview Gratis'
+        // OPCION A: Mandar como STICKER - Se ve transparente en el chat
+        await conn.sendMessage(m.chat, { sticker: webpBuffer }, { quoted: m })
 
-        // TRUCO 1: Enviar como documento + jpegThumbnail null
-        // TRUCO 2: Si quieres que se vea en el chat, usa sticker
+        // OPCION B: También mandar como documento PNG original por si lo quieren descargar
         await conn.sendMessage(m.chat, {
             document: imgBuffer,
             fileName: `nobg_${Date.now()}.png`,
             mimetype: 'image/png',
-            caption: `✅ *Fondo eliminado*\n*Modo:* ${tipoMsg}`,
-            jpegThumbnail: null // ESTO EVITA QUE WHATSAPP LO CONVIERTA A JPG
+            caption: `✅ *Fondo eliminado* | *Modo:* ${modo === 'hd'? '🔥 HD' : '💎 Preview'}\n*Nota:* Descarga el doc para PNG transparente real`
         }, { quoted: m })
-
-        // OPCIONAL: También mandarlo como sticker transparente
-        // await conn.sendMessage(m.chat, { sticker: imgBuffer }, { quoted: m })
 
     } catch (error) {
         console.error(error)
