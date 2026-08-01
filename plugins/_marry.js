@@ -1,98 +1,90 @@
-let handler = async (m, { conn, usedPrefix, command }) => {
-    let who = m.mentionedJid[0]? m.mentionedJid[0] : m.quoted? m.quoted.sender : null
+let handler = async (m, { conn, command, text }) => {
+  let yo = m.sender
+  let who = m.quoted?.sender || m.mentionedJid[0]
+  
+  // Si no hay base de datos la creamos
+  if(!global.db.data.casados) global.db.data.casados = {}
+  
+  let casados = global.db.data.casados
 
-    // ===== IMAGENES =====
-    // Boda: Pareja tierna abrazada
-    const IMG_CASAMIENTO = 'https://files.evogb.win/zu9HrE.jpg'
-    // Divorcio: Corazón roto lluvia
-    const IMG_DIVORCIO = 'https://files.evogb.win/bftECK.jpg'
+  if(command == 'casar' || command == 'matrimonio'){
+    if(!who) return m.reply(`💍 *Uso:*.casar @usuario\n*O responde a su mensaje para proponer* 🥺`)
+    if(who === yo) return m.reply(`🌸 *No te puedes casar contigo mismo*`)
+    
+    // Revisar si ya están casados
+    if(casados[yo] || casados[who]) return m.reply(`😿 *Ya uno de los 2 está casado*\nUsa *.divorcio* primero`)
 
-    global.db.data.users[m.sender] = global.db.data.users[m.sender] || { pareja: null }
+    // Casarlos
+    casados[yo] = who
+    casados[who] = yo
 
-    const sendMedia = async (chat, url, caption, mentions) => {
-        return conn.sendMessage(chat, {
-            image: { url: url },
-            caption: caption,
-            mentions: mentions
-        }, { quoted: m })
-    }
+    let nameYo = await conn.getName(yo)
+    let nameWho = await conn.getName(who)
+    let numYo = yo.split('@')[0]
+    let numWho = who.split('@')[0]
 
-    // ===== CASARSE =====
-    if (command == 'marry' || command == 'casar') {
-        if (!who) return m.reply(`💍 *Uso:* ${usedPrefix}marry @usuario\n*Etiqueta a la persona que amas* 🥺`)
-        if (who === m.sender) return m.reply('🙄 *El amor propio es bonito, pero no cuenta xd*')
+    let txt = `ᯇ 💒 𝗕𝗢𝗗𝗔 𝗕𝗢𝗧 💒 ୧
 
-        global.db.data.users[who] = global.db.data.users[who] || { pareja: null }
-        let user = global.db.data.users[m.sender]
-        let target = global.db.data.users[who]
+꒰ ◞⁺⊹ ．@${numYo} y @${numWho}
 
-        if (user.pareja) return m.reply(`💍 *Ya tienes un corazón ocupado con @${user.pareja.split('@')[0]}*\n*Usa ${usedPrefix}divorcio si quieres soltar*`, null, { mentions: [user.pareja] })
-        if (target.pareja) return m.reply(`💔 *@${who.split('@')[0]} ya le entregó su corazón a alguien*`, null, { mentions: [who] })
+*${nameYo}* y *${nameWho}*
 
-        // Casarlos
-        user.pareja = who
-        target.pareja = m.sender
+💍 *AHORA ESTÁN CASADOS* 💍
 
-        let fecha = new Date().toLocaleDateString('es-PE', { day: '2-digit', month: 'long', year: 'numeric' })
+──愛 *𝗝𝗨𝗥𝗔𝗠𝗘𝗡𝗧𝗢* ╏ 🕊️
+"Los declaro esposos. Que el amor los acompañe siempre"
 
-        let caption = `ᯇ 💒 𝗡𝗨𝗘𝗦𝗧𝗥𝗢 𝗔𝗠𝗢𝗥 𝗘𝗠𝗣𝗜𝗘𝗭𝗔 💒 ୧
+> *Felicidades a la nueva pareja* 🎉✨`
 
-꒰ ◞⁺⊹ ．🤍 *¡NOS CASAMOS!* 🤍
+    await conn.sendMessage(m.chat, {
+      text: txt,
+      mentions: [yo, who]
+    }, { quoted: m })
+  }
 
-@${m.sender.split('@')[0]} 💕 @${who.split('@')[0]}
+  if(command == 'divorcio' || command == 'divorciar'){
+    if(!casados[yo]) return m.reply(`😔 *No estás casado con nadie*\nUsa *.casar @usuario* para casarte`)
+    
+    let pareja = casados[yo]
+    let nameYo = await conn.getName(yo)
+    let namePareja = await conn.getName(pareja)
+    let numYo = yo.split('@')[0]
+    let numPareja = pareja.split('@')[0]
 
-──愛 *𝗣𝗥𝗢𝗠𝗘𝗦𝗔* ╏ 💌
-"Prometo cuidarte, hacerte reír en tus días tristes,
-ser tu casa cuando el mundo pese,
-y elegirte todos los días de mi vida"
+    // Divorciarlos
+    delete casados[yo]
+    delete casados[pareja]
 
-──愛 *𝗡𝗨𝗘𝗦𝗧𝗥𝗢 𝗗𝗜𝗔* ╏ 🌸
-📅 *${fecha}*
-✨ *Desde hoy nuestros corazones laten al mismo ritmo*
-🌙 *Dulces sueños juntos, aventuras de la mano*
+    let txt = `ᯇ 💔 𝗗𝗜𝗩𝗢𝗥𝗖𝗜𝗢 𝗕𝗢𝗧 💔 ୧
 
-> *Que el amor nos encuentre siempre* 💕🎉`
+꒰ ◞⁺⊹ ．@${numYo} y @${numPareja}
 
-        return sendMedia(m.chat, IMG_CASAMIENTO, caption, [m.sender, who])
-    }
+*${nameYo}* y *${namePareja}*
 
-    // ===== DIVORCIARSE =====
-    if (command == 'divorcio' || command == 'divorce') {
-        let user = global.db.data.users[m.sender]
-        if (!user.pareja) return m.reply(`💔 *Tu corazón está libre*\n*Usa ${usedPrefix}marry @usuario para amar de nuevo*`)
+💔 *SE HAN DIVORCIADO* 💔
 
-        let pareja = user.pareja
-        if (global.db.data.users[pareja].pareja!== m.sender) return m.reply(`⚠️ *Error en la DB*`)
+──愛 *𝗔𝗖𝗧𝗔* ╏ 🕊️
+"El matrimonio ha terminado. Cada uno por su lado"
 
-        // Divorcio
-        user.pareja = null
-        global.db.data.users[pareja].pareja = null
+> *Que les vaya bonito por separado* 🥺`
 
-        let caption = `ᯇ 🥀 𝗨𝗡 𝗔𝗠𝗢𝗥 𝗤𝗨𝗘 𝗧𝗘𝗥𝗠𝗜𝗡𝗔 🥀 ୧
+    await conn.sendMessage(m.chat, {
+      text: txt,
+      mentions: [yo, pareja]
+    }, { quoted: m })
+  }
 
-꒰ ◞⁺⊹ ．😔 *NOS DESPEDIMOS* 😔
-
-@${m.sender.split('@')[0]} 💔 @${pareja.split('@')[0]}
-
-──愛 *𝗨𝗟𝗧𝗜𝗠𝗔 𝗖𝗔𝗥𝗧𝗔* ╏ 💌
-"A veces amar también es soltar...
-Gracias por las risas, por las noches hablando,
-por enseñarme que el amor existe.
-No funcionó, pero fuiste bonito mientras duró"`
-
-──愛 *𝗥𝗘𝗖𝗨𝗘𝗥𝗗𝗢* ╏ 🍂
-*Nos quisimos bien, pero la vida decidió diferente*
-*Guardo lo bonito y dejo ir el dolor*
-
-> *Ojalá ambos encontremos paz* 🕊️ *Cuídate mucho*`
-
-        return sendMedia(m.chat, IMG_DIVORCIO, caption, [m.sender, pareja])
-    }
+  if(command == 'pareja' || command == 'esposo'){
+    if(!casados[yo]) return m.reply(`😔 *No estás casado con nadie*`)
+    let pareja = casados[yo]
+    let namePareja = await conn.getName(pareja)
+    let numPareja = pareja.split('@')[0]
+    m.reply(`💍 *Tu pareja es:* @${numPareja}\n*Nombre:* ${namePareja}`, null, { mentions: [pareja] })
+  }
 }
 
-handler.help = ['marry @usuario', 'divorcio']
+handler.help = ['casar *@usuario*', 'divorcio', 'pareja']
 handler.tags = ['love']
-handler.command = /^(marry|casar|divorcio|divorce)$/i
+handler.command = /^(casar|matrimonio|divorcio|divorciar|pareja|esposo)$/i
 handler.group = true
-
 export default handler
