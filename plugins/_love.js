@@ -44,8 +44,6 @@ let handler = async (m, { conn, command, text }) => {
 
 ꒰ ◞⁺⊹ ．@${numYo} y @${numWho}
 
-*${nameYo}* + *${nameWho}*
-
 *Puntaje:* *${compatibilidad}/10*
 ${corazones}
 
