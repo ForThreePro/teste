@@ -1,54 +1,43 @@
 let handler = async (m, { conn, command, text }) => {
-  // FORMA 1: Mencion directa
-  let who = m.mentionedJid[0]
+  let yo = m.sender
+  let who = null
   
-  // FORMA 2: Respondiendo
-  if(!who && m.quoted) who = m.quoted.sender
+  // 1. Si respondió a un mensaje
+  if(m.quoted) who = m.quoted.sender
   
-  // FORMA 3: Buscar en el grupo por nombre/número
-  if(!who && text) {
-    // Busca @123456
-    let match = text.match(/@(\d+)/)
-    if(match) who = match[1] + '@s.whatsapp.net'
-    else {
-      // Busca por nombre en el grupo
-      let participants = await conn.groupMetadata(m.chat)
-      let nombreBuscado = text.replace(command, '').trim().toLowerCase()
-      let encontrado = participants.participants.find(p => 
-        p.id && (conn.getName(p.id).toLowerCase().includes(nombreBuscado))
-      )
-      if(encontrado) who = encontrado.id
-    }
+  // 2. Si mencionó a alguien
+  else if(m.mentionedJid && m.mentionedJid[0]) who = m.mentionedJid[0]
+  
+  // 3. Si escribió un nombre:.compatibilidad Romi2
+  else if(text) {
+    let nombreBuscado = text.replace(command, '').trim().toLowerCase()
+    if(!nombreBuscado) return m.reply(`💕 *Uso:*.compatibilidad @usuario\n*O*.compatibilidad Romi2\n*O responde a su mensaje* 🥺`)
+    
+    let group = await conn.groupMetadata(m.chat)
+    let participante = group.participants.find(p => {
+      let nombre = conn.getName(p.id) || p.id.split('@')[0]
+      return nombre.toLowerCase().includes(nombreBuscado)
+    })
+    if(participante) who = participante.id
   }
 
-  let yo = m.sender
-  if (!who) return m.reply(`💕 *Uso:*.compatibilidad @usuario\n*Ejemplo:*.compatibilidad @Romi2\n*O responde al mensaje de la persona* 🥺`)
+  if (!who) return m.reply(`💕 *No te encontré*\nEtiqueta, responde o escribe el nombre exacto 🥺`)
   if (who === yo) return m.reply(`🌸 *Contigo mismo tienes 10/10 de amor propio*`)
 
-  // Generar del 1 al 10
   let compatibilidad = Math.floor(Math.random() * 10) + 1;
   let corazones = '❤️'.repeat(compatibilidad) + '🖤'.repeat(10 - compatibilidad)
 
   let estado, consejo
-  if(compatibilidad <= 3){
-    estado = '🌧️ *BAJA COMPATIBILIDAD*'
-    consejo = 'Mejor como amigos. No se fuercen 🥺'
-  } else if(compatibilidad <= 6){
-    estado = '⛅ *COMPATIBILIDAD MEDIA*'
-    consejo = 'Hay química, pero necesitan hablar más 💬'
-  } else if(compatibilidad <= 9){
-    estado = '☀️ *ALTA COMPATIBILIDAD*'
-    consejo = 'Se ven muy bien juntos. Denle una oportunidad 🤍'
-  } else {
-    estado = '🔥 *ALMAS GEMELAS*'
-    consejo = 'Están hechos el uno para el otro. No lo suelten 💍'
-  }
+  if(compatibilidad <= 3){ estado = '🌧️ *BAJA COMPATIBILIDAD*'; consejo = 'Mejor como amigos 🥺' }
+  else if(compatibilidad <= 6){ estado = '⛅ *MEDIA*'; consejo = 'Hay química, hablen más 💬' }
+  else if(compatibilidad <= 9){ estado = '☀️ *ALTA*'; consejo = 'Se ven bien juntos 🤍' }
+  else { estado = '🔥 *ALMAS GEMELAS*'; consejo = 'No lo suelten 💍' }
 
-  // Sacar nombres bien
+  // Forzar que cargue nombres
   let nameYo = await conn.getName(yo) || 'Tú'
-  let nameWho = await conn.getName(who) || who.split('@')[0]
+  let nameWho = await conn.getName(who) || 'Usuario'
   let numYo = yo.split('@')[0]
-  let numWho = who.split('@')[0].replace(/[^0-9]/g, '')
+  let numWho = who.split('@')[0]
 
   let txt = `ᯇ 💘 𝗖𝗢𝗠𝗣𝗔𝗧𝗜𝗕𝗜𝗟𝗜𝗗𝗔𝗗 𝗕𝗢𝗧 💘 ୧
 
@@ -61,19 +50,19 @@ ${corazones}
 
 ${estado}
 
-──愛 *𝗖𝗢𝗡𝗦𝗘𝗝𝗢 𝗗𝗘𝗟 𝗖𝗨𝗣𝗜𝗗𝗢* ╏ 🕊️
+──愛 *𝗖𝗢𝗡𝗦𝗘𝗝𝗢* ╏ 🕊️
 "${consejo}"
 
 > *El destino está en sus manos* ✨`
 
   await conn.sendMessage(m.chat, {
     text: txt,
-    mentions: [yo, who] // ESTO ES LO QUE OBLIGA A MENCIONAR
+    mentions: [yo, who] // OBLIGA A WHATSAPP A PINTAR
   }, { quoted: m })
 }
 
-handler.help = ['love *@usuario*']
+handler.help = ['love <nombre/@/responder>']
 handler.tags = ['love']
-handler.command = /^(love|love10|love1-10)$/i
+handler.command = /^(love|love10)$/i
 handler.group = true
 export default handler
