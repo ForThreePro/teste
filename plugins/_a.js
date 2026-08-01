@@ -1,7 +1,6 @@
 import fetch from 'node-fetch'
 import FormData from 'form-data'
-
-const NUMEROS_AUTORIZADOS = ['528621029907', '5218621029907', '51927174369']
+import sharp from 'sharp'
 
 // PON TUS 5 KEYS NUEVAS AQUÍ
 const APIS = [
@@ -13,38 +12,80 @@ const APIS = [
 ]
 
 let apiIndex = 0
+let procesos = new Map() // guarda la imagen temporal
 
-let handler = async (m, { conn, usedPrefix }) => {
-    const numeroQueUso = m.sender.split('@')[0]
-    if (!NUMEROS_AUTORIZADOS.includes(numeroQueUso)) return m.reply('❌ ACCESO DENEGADO')
+let handler = async (m, { conn, usedPrefix, command, args }) => {
+    let q = m.quoted? m.quoted : m
 
-    try {
-        await m.react('🕓')
-        let q = m.quoted? m.quoted : m
-        let mime = (q.msg || q).mimetype || ''
-        if (!mime ||!mime.startsWith('image/')) return m.reply(`Responde a una imagen con: ${usedPrefix}removebg`)
-
+    // PASO 1: Si responde a imagen, muestra botones
+    if (q.mimetype && q.mimetype.startsWith('image/') &&!args[0]) {
         let buffer = await q.download()
-        let imgBuffer = await removeBg(buffer)
+        let id = Date.now().toString()
+        procesos.set(id, buffer) // guardamos la imagen
 
-        await conn.sendFile(m.chat, imgBuffer, `nobg_${Date.now()}.png`, `✅ *Fondo eliminado* | API: ${apiIndex + 1}/5`, m)
-        await m.react('✅')
+        let { width, height } = await sharp(buffer).metadata()
 
-    } catch (error) {
-        console.error(error)
-        await m.react('❌')
-        m.reply(`❌ *ERROR* ❌\n${error.message}\n\n*Se agotaron los créditos de las 5 keys*`)
+        return conn.sendButton(m.chat, `
+╭─「 🎨 *REMOVE BG PRO* 」
+│
+│ *Resolución:* ${width}x${height}px
+│ *Elige la calidad:*
+│
+│ 🔥 *HD*: Tamaño original | Gasta 1 crédito
+│ 💎 *Preview*: 625x400px | Gratis
+│
+╰─────────────────`,
+        'Elige un modo',
+        [['🔥 HD', `.removebg hd ${id}`], ['💎 Preview', `.removebg preview ${id}`]],
+        m)
     }
+
+    // PASO 2: Si presiona botón, procesa
+    if (args[0] && args[1]) {
+        let modo = args[0] // hd o preview
+        let id = args[1]
+        let buffer = procesos.get(id)
+
+        if (!buffer) return m.reply('❌ La imagen expiró. Vuelve a responderla.')
+        procesos.delete(id)
+
+        try {
+            await m.react('⏳')
+            let imgBuffer = await removeBg(buffer, modo)
+            await m.react('✅')
+
+            let tipoMsg = modo === 'auto'? '🔥 HD Normal' : '💎 Preview Gratis'
+            let caption = `╭─「 ✅ *FONDO ELIMINADO* 」
+│
+│ *Modo:* ${tipoMsg}
+│ *API Usada:* #${apiIndex}/5
+│
+╰─────────────────`
+
+            await conn.sendFile(m.chat, imgBuffer, `nobg_${Date.now()}.png`, caption, m)
+
+        } catch (error) {
+            console.error(error)
+            await m.react('❌')
+            m.reply(`❌ ${error.message}`)
+        }
+        return
+    }
+
+    // Si no responde a imagen
+    return m.reply(`Responde a una imagen con: *${usedPrefix + command}*`)
 }
 
-async function removeBg(buffer) {
+async function removeBg(buffer, modoElegido) {
+    let modo = modoElegido === 'hd'? 'auto' : 'preview'
     let intentos = 0
+
     while(intentos < APIS.length) {
         let key = APIS[apiIndex]
         try {
             let form = new FormData()
             form.append('image_file', buffer)
-            form.append('size', 'auto')
+            form.append('size', modo)
 
             let res = await fetch('https://api.remove.bg/v1.0/removebg', {
                 method: 'POST',
@@ -54,24 +95,20 @@ async function removeBg(buffer) {
             })
 
             if(res.ok) {
-                apiIndex = (apiIndex + 1) % APIS.length // rota para la siguiente
-                return await res.buffer()
+                let result = await res.buffer()
+                apiIndex = (apiIndex + 1) % APIS.length
+                return result
             }
-            if(res.status === 402) { // sin créditos
-                console.log(`Key ${apiIndex + 1} sin créditos`)
-            }
-        } catch(e){
-            console.log(`Key ${apiIndex + 1} falló`)
-        }
+        } catch(e){}
 
         apiIndex = (apiIndex + 1) % APIS.length
         intentos++
     }
-    throw new Error('Todas las 5 keys están sin créditos o fallaron')
+    throw new Error(`Todas las 5 keys están sin créditos en modo ${modo}`)
 }
 
 handler.help = ['removebg']
 handler.tags = ['tools', 'ai']
 handler.command = /^(removebg|rmbg|nobg)$/i
-handler.limit = true
+handler.limit = 10
 export default handler
