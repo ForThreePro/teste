@@ -15,9 +15,13 @@ let handler = async (m, { conn, command }) => {
     let frase = porcentaje < 30? '🌸 *NOS CUIDAMOS COMO AMIGOS*' : porcentaje < 60? '💌 *HAY ALGO BONITO ENTRE USTEDES*' : porcentaje < 85? '🤍 *SE HACEN MUCHO BIEN JUNTOS*' : '💍 *ESTÁN HECHOS EL UNO PARA EL OTRO*'
     let detallito = porcentaje < 30? 'A veces el mejor amor es el de amigos 💫' : porcentaje < 60? 'Denle tiempo... las cosas bonitas florecen lento 🥺' : porcentaje < 85? 'Se nota que se quieren mucho. Cuídense 🤍' : 'Prométanse ser felices juntos siempre ✨'
 
+    // SACAMOS SOLO EL NUMERO SIN @s.whatsapp.net
+    let jidYo = yo.split('@')[0]
+    let jidWho = who.split('@')[0]
+
     let txt = `ᯇ 💕 𝗖𝗨𝗣𝗜𝗗𝗢 𝗕𝗢𝗧 💕 ୧
 
-꒰ ◞⁺⊹ ．@user y @target
+꒰ ◞⁺⊹ ．@${jidYo} y @${jidWho}
 
 *Compatibilidad:* *${porcentaje}%* 💘
 
@@ -30,9 +34,7 @@ ${frase}
 
     await conn.sendMessage(m.chat, {
       text: txt,
-      contextInfo: {
-        mentionedJid: [yo, who] // <- FORZAMOS LA MENCION ASI
-      }
+      mentions: [yo, who] // ESTO ES LO IMPORTANTE
     }, { quoted: m })
   }
 }
