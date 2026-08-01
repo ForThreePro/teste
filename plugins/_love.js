@@ -14,22 +14,27 @@ let handler = async (m, { conn, command }) => {
 
   let porcentaje = Math.floor(Math.random() * 101);
 
+  // FORZAMOS A QUE CARGUE LOS NOMBRES
+  let [nameYo, nameWho] = await Promise.all([
+    conn.getName(yo),
+    conn.getName(who)
+  ])
+  
+  // Si no hay nombre, usamos el pushName o el numero
+  nameYo = nameYo || yo.split('@')[0]
+  nameWho = nameWho || who.split('@')[0].replace(/[^0-9]/g, '')
+
   if(command == 'love' || command == 'amor' || command == 'compatibilidad'){
     let frase = porcentaje < 30? '🌸 *NOS CUIDAMOS COMO AMIGOS*' : porcentaje < 60? '💌 *HAY ALGO BONITO ENTRE USTEDES*' : porcentaje < 85? '🤍 *SE HACEN MUCHO BIEN JUNTOS*' : '💍 *ESTÁN HECHOS EL UNO PARA EL OTRO*'
     let detallito = porcentaje < 30? 'A veces el mejor amor es el de amigos 💫' : porcentaje < 60? 'Denle tiempo... las cosas bonitas florecen lento 🥺' : porcentaje < 85? 'Se nota que se quieren mucho. Cuídense 🤍' : 'Prométanse ser felices juntos siempre ✨'
 
-    // TRUCO: Intentamos sacar el nombre, si no hay usamos el numero
-    let nameYo = await conn.getName(yo) || yo.split('@')[0]
-    let nameWho = await conn.getName(who) || who.split('@')[0].replace(/[^0-9]/g, '')
-
-    let jidYo = yo.split('@')[0].replace(/[^0-9]/g, '')
-    let jidWho = who.split('@')[0].replace(/[^0-9]/g, '')
-
+    // CLAVE: Ponemos @ + numero limpio y pasamos mentionedJid
     let txt = `ᯇ 💕 𝗖𝗨𝗣𝗜𝗗𝗢 𝗕𝗢𝗧 💕 ୧
 
-꒰ ◞⁺⊹ ．@${jidYo} y @${jidWho}
+꒰ ◞⁺⊹ ．@${yo.split('@')[0]} y @${who.split('@')[0].replace(/[^0-9]/g, '')}
 
 *Compatibilidad:* *${porcentaje}%* 💘
+*${nameYo}* y *${nameWho}*
 
 ${frase}
 
@@ -40,7 +45,7 @@ ${frase}
 
     await conn.sendMessage(m.chat, {
       text: txt,
-      mentions: [yo, who]
+      mentions: [yo, who] // ESTO OBLIGA A WHATSAPP A PINTAR LOS @
     }, { quoted: m })
   }
 }
