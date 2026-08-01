@@ -1,20 +1,36 @@
 let handler = async (m, { conn, command, text }) => {
   let yo = m.sender
-  let who = m.quoted?.sender || m.mentionedJid[0]
-  
-  // Si no hay base de datos la creamos
+  let who = null
+
   if(!global.db.data.casados) global.db.data.casados = {}
-  
   let casados = global.db.data.casados
 
+  // 1. RESPONDIENDO
+  if(m.quoted) who = m.quoted.sender
+
+  // 2. MENCION REAL - tocar @ y elegir
+  else if(m.mentionedJid && m.mentionedJid[0]) who = m.mentionedJid[0]
+
+  // 3. BUSCAR POR NOMBRE -.casar Romi2
+  else if(text) {
+    let nombreBuscado = text.replace(command, '').replace('@','').trim().toLowerCase()
+    if(!nombreBuscado) return m.reply(`💍 *Uso:*.casar @usuario\n*O*.casar Romi2\n*O responde a su mensaje* 🥺`)
+
+    let group = await conn.groupMetadata(m.chat)
+    let participante = group.participants.find(p => {
+      let nombre = conn.getName(p.id) || p.id.split('@')[0]
+      let numero = p.id.split('@')[0]
+      return nombre.toLowerCase().includes(nombreBuscado) || numero.includes(nombreBuscado)
+    })
+    if(participante) who = participante.id
+    else return m.reply(`😿 *No encontré a "${nombreBuscado}" en el grupo*\nResponde a su mensaje o etiquétalo de la lista`)
+  }
+
   if(command == 'casar' || command == 'matrimonio'){
-    if(!who) return m.reply(`💍 *Uso:*.casar @usuario\n*O responde a su mensaje para proponer* 🥺`)
+    if(!who) return m.reply(`💍 *Uso:*.casar @usuario\n*O responde a su mensaje* 🥺`)
     if(who === yo) return m.reply(`🌸 *No te puedes casar contigo mismo*`)
-    
-    // Revisar si ya están casados
     if(casados[yo] || casados[who]) return m.reply(`😿 *Ya uno de los 2 está casado*\nUsa *.divorcio* primero`)
 
-    // Casarlos
     casados[yo] = who
     casados[who] = yo
 
@@ -36,22 +52,18 @@ let handler = async (m, { conn, command, text }) => {
 
 > *Felicidades a la nueva pareja* 🎉✨`
 
-    await conn.sendMessage(m.chat, {
-      text: txt,
-      mentions: [yo, who]
-    }, { quoted: m })
+    await conn.sendMessage(m.chat, { text: txt, mentions: [yo, who] }, { quoted: m })
   }
 
   if(command == 'divorcio' || command == 'divorciar'){
-    if(!casados[yo]) return m.reply(`😔 *No estás casado con nadie*\nUsa *.casar @usuario* para casarte`)
-    
+    if(!casados[yo]) return m.reply(`😔 *No estás casado con nadie*`)
+
     let pareja = casados[yo]
     let nameYo = await conn.getName(yo)
     let namePareja = await conn.getName(pareja)
     let numYo = yo.split('@')[0]
     let numPareja = pareja.split('@')[0]
 
-    // Divorciarlos
     delete casados[yo]
     delete casados[pareja]
 
@@ -68,10 +80,7 @@ let handler = async (m, { conn, command, text }) => {
 
 > *Que les vaya bonito por separado* 🥺`
 
-    await conn.sendMessage(m.chat, {
-      text: txt,
-      mentions: [yo, pareja]
-    }, { quoted: m })
+    await conn.sendMessage(m.chat, { text: txt, mentions: [yo, pareja] }, { quoted: m })
   }
 
   if(command == 'pareja' || command == 'esposo'){
@@ -83,7 +92,7 @@ let handler = async (m, { conn, command, text }) => {
   }
 }
 
-handler.help = ['casar *@usuario*', 'divorcio', 'pareja']
+handler.help = ['casar <nombre/@/responder>', 'divorcio', 'pareja']
 handler.tags = ['love']
 handler.command = /^(casar|matrimonio|divorcio|divorciar|pareja|esposo)$/i
 handler.group = true
