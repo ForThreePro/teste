@@ -18,34 +18,32 @@ let handler = async (m, { conn, command, text }) => {
     }
   }
 
-  if(command == 'casar' || command == 'matrimonio'){
-    if(!who) return m.reply(`💍 *Úsame así:* \n1. Responde a su mensaje con *.casar*\n2. *.casar @usuario*\n3. *.casar Romi2* 🥺`)
-    if(who === yo) return m.reply(`🌸 *No te puedes casar contigo mismo precioso*`)
-    if(casados[yo] || casados[who]) return m.reply(`😿 *Uno de los 2 ya tiene dueño*\nUsen *.divorcio* primero`)
+  if(command == 'marry' || command == 'matrimonio'){
+    if(!who) return m.reply(`💍 *Use it like this:*\n1. Reply to their message with *.marry*\n2. *.marry @user*\n3. *.marry Romi2* 🥺`)
+    if(who === yo) return m.reply(`🌸 *You can't marry yourself silly*`)
+    if(casados[yo] || casados[who]) return m.reply(`😿 *One of you is already married*\nUse *.divorce* first`)
 
     casados[yo] = who
     casados[who] = yo
 
-    let nameYo = await conn.getName(yo) || 'Alguien'
-    let nameWho = await conn.getName(who) || 'Alguien'
+    let nameYo = await conn.getName(yo) || 'Someone'
+    let nameWho = await conn.getName(who) || 'Someone'
     let numYo = yo.split('@')[0]
     let numWho = who.split('@')[0]
 
-    let txt = `ᯇ 💒 𝗕𝗢𝗗𝗔 𝗕𝗢𝗧 💒 ୧
+    let txt = `ᯇ 💒 𝗪𝗘𝗗𝗗𝗜𝗡𝗚 𝗕𝗢𝗧 💒 ୧
 
 @${numYo} 💍 @${numWho}
 
-*¡${nameYo} y ${nameWho} se casaron!* 🤍
+"Today 2 hearts decided to walk together.
+To take care of each other, laugh, hug tight
+and choose each other even on gray days" ✨
 
-"Hoy 2 corazones decidieron caminar juntos.
-Que se cuiden, se rían, se abracen fuerte
-y se elijan hasta en los días grises" ✨
+──愛 *𝗩𝗢𝗪𝗦* ╏ 🕊️
+"I promise to be your home, your laugh and your peace.
+To love you today, tomorrow and always"
 
-──愛 *𝗝𝗨𝗥𝗔𝗠𝗘𝗡𝗧𝗢* ╏ 🕊️
-"Prometo ser tu casa, tu risa y tu paz.
-Amarte hoy, mañana y siempre"
-
-> *Que Dios bendiga esta bonita unión* 🎉💫`
+> *May God bless this beautiful union* 🎉💫`
 
     await conn.sendMessage(m.chat, {
       text: txt,
@@ -53,31 +51,29 @@ Amarte hoy, mañana y siempre"
     }, { quoted: m })
   }
 
-  if(command == 'divorcio' || command == 'divorciar'){
-    if(!casados[yo]) return m.reply(`😔 *No estás casado con nadie corazón*`)
+  if(command == 'divorce' || command == 'divorciar'){
+    if(!casados[yo]) return m.reply(`😔 *You're not married to anyone*`)
 
     let pareja = casados[yo]
-    let nameYo = await conn.getName(yo) || 'Alguien'
-    let namePareja = await conn.getName(pareja) || 'Alguien'
+    let nameYo = await conn.getName(yo) || 'Someone'
+    let namePareja = await conn.getName(pareja) || 'Someone'
     let numYo = yo.split('@')[0]
     let numPareja = pareja.split('@')[0]
 
     delete casados[yo]
     delete casados[pareja]
 
-    let txt = `ᯇ 💔 𝗗𝗜𝗩𝗢𝗥𝗖𝗜𝗢 𝗕𝗢𝗧 💔 ୧
+    let txt = `ᯇ 💔 𝗗𝗜𝗩𝗢𝗥𝗖𝗘 𝗕𝗢𝗧 💔 ୧
 
 @${numYo} 💔 @${numPareja}
 
-*${nameYo} y ${namePareja} se separaron* 🥺
+"Sometimes letting go is also a way to love.
+Thank you for the beautiful memories we shared" 🥺
 
-"A veces soltar también es quererse.
-Gracias por lo bonito que vivieron juntos"
+──愛 *𝗔𝗖𝗧* ╏ 🕊️
+"The goodbye is signed with respect and love"
 
-──愛 *𝗔𝗖𝗧𝗔* ╏ 🕊️
-"Se firma el adiós con respeto y cariño"
-
-> *Les deseo sanar y encontrar la felicidad* 🕊️🤍`
+> *Wishing you both healing and happiness* 🕊️🤍`
 
     await conn.sendMessage(m.chat, {
       text: txt,
@@ -85,17 +81,17 @@ Gracias por lo bonito que vivieron juntos"
     }, { quoted: m })
   }
 
-  if(command == 'pareja' || command == 'esposo'){
-    if(!casados[yo]) return m.reply(`😔 *Aún no tienes pareja*`)
+  if(command == 'couple' || command == 'pareja'){
+    if(!casados[yo]) return m.reply(`😔 *You're not married yet*`)
     let pareja = casados[yo]
     let namePareja = await conn.getName(pareja)
     let numPareja = pareja.split('@')[0]
-    m.reply(`💍 *Estás casado con:* @${numPareja}\n*Nombre:* ${namePareja}`, null, { mentions: [pareja] })
+    m.reply(`💍 *Your spouse is:* @${numPareja}\n*Name:* ${namePareja}`, null, { mentions: [pareja] })
   }
 }
 
-handler.help = ['casar <@responder/nombre>', 'divorcio', 'pareja']
+handler.help = ['marry <@reply/name>', 'divorce', 'couple']
 handler.tags = ['love']
-handler.command = /^(casar|matrimonio|divorcio|divorciar|pareja|esposo)$/i
+handler.command = /^(marry|matrimonio|divorce|divorciar|couple|pareja)$/i
 handler.group = true
 export default handler
