@@ -2,14 +2,6 @@ let handler = async (m, { conn, isAdmin, command }) => {
     if (!m.isGroup) return m.reply(`*🐉 GOKU PREM BOT 🐉*\n\n*❌ Este comando solo funciona en grupos*`)
     if (!isAdmin) return m.reply(`*🐉 GOKU PREM BOT 🐉*\n\n*❌ Solo admins pueden usar este comando*`)
 
-    let group = await conn.groupMetadata(m.chat)
-    
-    // FORMA SEGURA DE DETECTAR AL BOT
-    let botNumber = conn.decodeJid(conn.user.id)
-    let botAdmin = group.participants.find(p => p.id === botNumber)?.admin
-
-    if (!botAdmin) return m.reply(`*🐉 GOKU PREM BOT 🐉*\n\n*❌ Necesito ser admin para hacer eso*\n\n*ID:* ${botNumber}`)
-
     try {
         if(command === 'abrir' || command === 'open'){
             await conn.groupSettingUpdate(m.chat, 'not_announcement')
@@ -51,6 +43,9 @@ let handler = async (m, { conn, isAdmin, command }) => {
         }
     } catch (e) {
         console.error(e)
+        if(e.message.includes('not-admin')) {
+            return m.reply(`*🐉 GOKU PREM BOT 🐉*\n\n*❌ Necesito ser admin para hacer eso*`)
+        }
         await m.reply(`*❌ ERROR:* ${e.message}`)
     }
 }
@@ -59,5 +54,5 @@ handler.help = ['abrir', 'cerrar']
 handler.tags = ['group']
 handler.command = ['abrir', 'cerrar', 'open', 'close']
 handler.admin = true
-handler.botAdmin = true
+// handler.botAdmin = false  <-- LO QUITAMOS PARA QUE NO BUGUEE
 export default handler
