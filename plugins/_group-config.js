@@ -3,15 +3,12 @@ let handler = async (m, { conn, isAdmin, command }) => {
     if (!isAdmin) return m.reply(`*🐉 GOKU PREM BOT 🐉*\n\n*❌ Solo admins pueden usar este comando*`)
 
     let group = await conn.groupMetadata(m.chat)
-    let participants = group.participants
-
-    // FIX: LIMPIAR EL ID DEL BOT
-    let botNumber = conn.user.jid || conn.user.id
-    botNumber = botNumber.replace(/:.*@/, '@') // quita :device si lo trae
     
-    let botAdmin = participants.find(p => p.id === botNumber)?.admin
+    // FORMA SEGURA DE DETECTAR AL BOT
+    let botNumber = conn.decodeJid(conn.user.id)
+    let botAdmin = group.participants.find(p => p.id === botNumber)?.admin
 
-    if (!botAdmin) return m.reply(`*🐉 GOKU PREM BOT 🐉*\n\n*❌ Necesito ser admin para hacer eso*\n\n*ID detectado:* ${botNumber}`)
+    if (!botAdmin) return m.reply(`*🐉 GOKU PREM BOT 🐉*\n\n*❌ Necesito ser admin para hacer eso*\n\n*ID:* ${botNumber}`)
 
     try {
         if(command === 'abrir' || command === 'open'){
