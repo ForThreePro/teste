@@ -5,10 +5,10 @@ let handler = async (m, { conn, isAdmin, command }) => {
     let group = await conn.groupMetadata(m.chat)
     let participants = group.participants
 
-    // DETECTAR ID DEL BOT SIN BUG
+    // FIX: LIMPIAR EL ID DEL BOT
     let botNumber = conn.user.jid || conn.user.id
-    botNumber = botNumber.split(':')[0] + '@s.whatsapp.net'
-
+    botNumber = botNumber.replace(/:.*@/, '@') // quita :device si lo trae
+    
     let botAdmin = participants.find(p => p.id === botNumber)?.admin
 
     if (!botAdmin) return m.reply(`*🐉 GOKU PREM BOT 🐉*\n\n*❌ Necesito ser admin para hacer eso*\n\n*ID detectado:* ${botNumber}`)
