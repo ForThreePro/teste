@@ -1,6 +1,5 @@
 let handler = async (m, { conn }) => {
     if (m.fromMe) return
-    if (!m.quoted) return m.reply(`*Responde a un sticker* 🍟`)
     if (m.quoted.mtype !== 'stickerMessage') return m.reply(`*Responde a un sticker* 🍟`)
 
     try {
