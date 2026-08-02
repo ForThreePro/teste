@@ -2,11 +2,16 @@ let handler = async (m, { conn, isAdmin, command }) => {
     if (!m.isGroup) return m.reply(`*🐉 GOKU PREM BOT 🐉*\n\n*❌ Este comando solo funciona en grupos*`)
     if (!isAdmin) return m.reply(`*🐉 GOKU PREM BOT 🐉*\n\n*❌ Solo admins pueden usar este comando*`)
 
-    let groupMetadata = await conn.groupMetadata(m.chat)
-    let botId = conn.user.id.split(':')[0] + '@s.whatsapp.net' // fix del bug
-    let botAdmin = groupMetadata.participants.find(p => p.id === botId)?.admin
+    let group = await conn.groupMetadata(m.chat)
+    let participants = group.participants
 
-    if (!botAdmin) return m.reply(`*🐉 GOKU PREM BOT 🐉*\n\n*❌ Necesito ser admin para hacer eso*`)
+    // DETECTAR ID DEL BOT SIN BUG
+    let botNumber = conn.user.jid || conn.user.id
+    botNumber = botNumber.split(':')[0] + '@s.whatsapp.net'
+
+    let botAdmin = participants.find(p => p.id === botNumber)?.admin
+
+    if (!botAdmin) return m.reply(`*🐉 GOKU PREM BOT 🐉*\n\n*❌ Necesito ser admin para hacer eso*\n\n*ID detectado:* ${botNumber}`)
 
     try {
         if(command === 'abrir' || command === 'open'){
@@ -49,7 +54,7 @@ let handler = async (m, { conn, isAdmin, command }) => {
         }
     } catch (e) {
         console.error(e)
-        await m.reply(`*❌ ERROR:* No se pudo ejecutar el comando\n*Motivo:* ${e.message}`)
+        await m.reply(`*❌ ERROR:* ${e.message}`)
     }
 }
 
