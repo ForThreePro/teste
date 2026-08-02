@@ -1,56 +1,65 @@
 import crypto from "crypto"
 import { FormData, Blob } from "formdata-node"
 import { fileTypeFromBuffer } from "file-type"
-import fetch from "node-fetch"
 
 let handler = async (m, { conn }) => {
   let q = m.quoted? m.quoted : m
   let mime = (q.msg || q).mimetype || ''
-  if (!mime ||!mime.startsWith('image/')) return conn.reply(m.chat, `Responde a una imagen con: *.rbg*`, m)
+  if (!mime) return conn.reply(m.chat, `*🚜 GOKU PREM 🍓*
+
+*❌ ERROR ❌*
+
+╭─「 INSTRUCCION 」─╮
+│ *Responde a un archivo valido*
+│ *Formatos*: Imagen, Video, Audio, Doc
+╰──────────────────╯`, m)
 
   try {
     await conn.sendMessage(m.chat, { react: { text: '⏳', key: m.key } })
     let media = await q.download()
+    let link = await myCloud(media)
+    if (!link.url) throw new Error()
 
-    await conn.reply(m.chat, `🎨 *Quitando fondo en modo Preview Gratis...*\n☁️ *Subiendo a la nube...*`, m)
+    let txt = `*🍓 GOKU PREM 🚜*
 
-    // USAR API GRATIS: remove.bg preview no gasta credito
-    let sinFondo = await removeBgFree(media)
-    let link = await myCloud(sinFondo)
+╭─「 ⚡ REPORTE 」─╮
+│ *ENLACE:* ${link.url}
+│ *ID:* ${link.id || 'N/A'}
+│ *TAMAÑO:* ${formatBytes(media.length)}
+│ *SERVIDOR:* evogb.win
+│ *BOT:* Goku
+╰─────────────────╯
 
-    await conn.reply(m.chat, `*✅ LISTO*\n*🔗 LINK:* ${link.url}\n*Modo:* 💎 Preview Gratis Ilimitado`, m)
+> *"Subido a la nube por Goku"*`
+
+    await conn.sendFile(m.chat, media, 'goku.' + link.url.split('.').pop(), txt, m)
     await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
-
   } catch (e) {
+    console.error(e)
     await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-    await conn.reply(m.chat, `*❌ ERROR:* ${e.message}`, m)
+    await conn.reply(m.chat, `*🚜 GOKU PREM 🍓*\n\n*❌ ERROR DE SUBIDA ❌*`, m)
   }
 }
 
-async function removeBgFree(buffer) {
-    let form = new FormData()
-    form.append('image_file', buffer)
-    form.append('size', 'preview') // preview es gratis
-
-    let res = await fetch('https://api.remove.bg/v1.0/removebg', {
-        method: 'POST',
-        headers: { 'X-Api-Key': 'bzCVvJUG2sRhDB3gwDZEZfDp' }, // usa solo 1 key para preview
-        body: form
-    })
-    if(!res.ok) throw new Error("API caida")
-    return await res.buffer()
+function formatBytes(bytes) {
+  if (bytes === 0) return '0 B'
+  const sizes = ['B', 'KB', 'MB', 'GB', 'TB']
+  const i = Math.floor(Math.log(bytes) / Math.log(1024))
+  return `${(bytes / 1024 ** i).toFixed(2)} ${sizes[i]}`
 }
 
 async function myCloud(content) {
   const fileType = await fileTypeFromBuffer(content)
-  const ext = 'png'
+  const ext = fileType? fileType.ext : 'bin'
+  const mime = fileType? fileType.mime : 'application/octet-stream'
   const formData = new FormData()
-  formData.append("file", new Blob([content], { type: 'image/png' }), `rbg_${crypto.randomBytes(5).toString("hex")}.${ext}`)
-
+  formData.append("file", new Blob([content], { type: mime }), `${crypto.randomBytes(5).toString("hex")}.${ext}`)
   const response = await fetch("https://evogb.win/api/upload", { method: "POST", body: formData })
-  if (!response.ok) throw new Error("Servidor caido")
+  if (!response.ok) throw new Error()
   return await response.json()
 }
 
-handler.command = ['rbg'];
+handler.help = ['tourl'];
+handler.tags = ['tools'];
+handler.command = ['upp', 'tourl'];
 export default handler
