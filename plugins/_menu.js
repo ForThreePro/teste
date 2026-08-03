@@ -9,13 +9,11 @@ buscadores: 'SEARCH', descargas: 'DOWNLOADER', grupo: 'GRUPOS',
 group: 'GRUPO', gacha: 'GROUP', ia: 'IA', info: 'INFO', sticker: 'STICKER',
 }
 
-// AQUÍ DEFINES EL EMOJI FIJO PARA CADA CATEGORIA
-// Si agregas una categoría nueva, ponle aquí su emoji y ya no cambia
+// EMOJI FIJO POR CATEGORIA - AGREGA AQUI LAS NUEVAS
 const ICONOS_CATEGORIA = {
 config: '⚙️', owner: '☕', fun: '🎋', ff: '🍃', buscadores: '🔎',
 descargas: '🌷', grupo: '🍒', grupos: '🍒', gacha: '👥', ia: '💭',
 info: '☁️', sticker: '🎐', main: '🌸', tools: '🧩', sorteos: '🎁', joda: '😂',
-// NUEVAS CATEGORIAS - AGREGALAS AQUI
 rpg: '💸', anime: '🍥', game: '🪩', nsfw: '🦑', canvas: '🫟',
 effects: '🌪️', frases: '🍯', reg: '🪸', shop: '🪎', socket: '🪷',
 image: '🌳', internet: '📡', onoff: '⚙️', dzm: '🎨'
@@ -90,12 +88,10 @@ for (const tag of tagsOrdenados) {
   if (!set || set.size === 0) continue
   const cmds = [...set].sort()
 
-  const nombreCat = CATEGORY_META[tag] || tag.toUpperCase()
-
-  // Si no tiene emoji definido, usa este por defecto y ya no cambia
+  // SIEMPRE DICE PREM EN EL TITULO
   const icono = ICONOS_CATEGORIA[tag] || '📁'
 
-  menuTexto += `.⃟𖥔 ݁. 𖦹˙— \`\`${nombreCat}\`\` —˙𖦹.${icono}꒷\n`
+  menuTexto += `.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.${icono}꒷\n`
   for (const c of cmds) {
     menuTexto += ` ${icono} ➛.${c}\n`
   }
