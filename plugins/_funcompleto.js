@@ -1,18 +1,30 @@
 let handler = async (m, { conn, command, text }) => {
     let who = m.sender
+    let participants = m.isGroup? (await conn.groupMetadata(m.chat)).participants : []
 
-    // PRIORIDAD 1: MENCION TOCANDO @
-    if (m.mentionedJid && m.mentionedJid[0]) {
+    // PRIORIDAD 1: SI MENCIONAS TOCANDO @
+    if (m.mentionedJid && m.mentionedJid.length > 0) {
         who = m.mentionedJid[0]
     }
-    // PRIORIDAD 2: RESPONDER MENSAJE
+    // PRIORIDAD 2: SI RESPONDES A UN MENSAJE - FORZADO
     else if (m.quoted) {
         who = m.quoted.sender
+        // Si Baileys la caga y te da tu propio JID, buscamos en el texto citado
+        if (who === m.sender && m.quoted.text) {
+            let match = m.quoted.text.match(/@(\d+)/)
+            if (match) who = match[1] + '@s.whatsapp.net'
+        }
     }
-    // PRIORIDAD 3: NUMERO A MANO
+    // PRIORIDAD 3: SI ESCRIBES NUMERO A MANO
     else if (text) {
         let num = text.replace(/[^0-9]/g, '')
         if (num.length > 8) who = num + '@s.whatsapp.net'
+        // Si escribes @nombre, busca en participantes del grupo
+        else {
+            let name = text.toLowerCase()
+            let found = participants.find(p => conn.getName(p.id).toLowerCase().includes(name))
+            if (found) who = found.id
+        }
     }
 
     let nombre = '@' + who.split('@')[0]
@@ -69,7 +81,7 @@ let handler = async (m, { conn, command, text }) => {
 
     await conn.sendMessage(m.chat, {
         text: txt,
-        mentions: [who]
+        mentions: [who] // AQUI OBLIGAMOS A WHATSAPP A MENCIONAR
     }, { quoted: m })
 }
 
