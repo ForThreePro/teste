@@ -77,7 +77,6 @@ let handler = async (m, { conn, command, text, participants }) => {
 }
 
 handler.help = [
-'🎮 *COMANDOS DE JUEGOS - USAR CON @* 🎮',
 'pelea @usuario',
 'cachetear @usuario',
 'curar @usuario',
