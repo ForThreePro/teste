@@ -2,6 +2,7 @@ let handler = async (m, { conn, command, text }) => {
     let who = m.sender
     let participants = m.isGroup? (await conn.groupMetadata(m.chat)).participants : []
 
+    // ====== SISTEMA FORZADO DE DETECCION ======
     // PRIORIDAD 1: SI MENCIONAS TOCANDO @
     if (m.mentionedJid && m.mentionedJid.length > 0) {
         who = m.mentionedJid[0]
@@ -15,15 +16,16 @@ let handler = async (m, { conn, command, text }) => {
             if (match) who = match[1] + '@s.whatsapp.net'
         }
     }
-    // PRIORIDAD 3: SI ESCRIBES NUMERO A MANO
+    // PRIORIDAD 3: SI ESCRIBES NOMBRE/NUMERO A MANO
     else if (text) {
-        let num = text.replace(/[^0-9]/g, '')
-        if (num.length > 8) who = num + '@s.whatsapp.net'
-        // Si escribes @nombre, busca en participantes del grupo
+        let name = text.split(' ')[0].toLowerCase()
+        // Busca por nombre primero
+        let found = participants.find(p => conn.getName(p.id).toLowerCase().includes(name))
+        if (found) who = found.id
         else {
-            let name = text.toLowerCase()
-            let found = participants.find(p => conn.getName(p.id).toLowerCase().includes(name))
-            if (found) who = found.id
+            // Si no, busca por numero
+            let num = text.replace(/[^0-9]/g, '')
+            if (num.length > 8) who = num + '@s.whatsapp.net'
         }
     }
 
