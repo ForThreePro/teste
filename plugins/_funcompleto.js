@@ -1,12 +1,9 @@
 let handler = async (m, { conn, command, text }) => {
-    let who = m.mentionedJid[0] || m.sender // 1. Si mencionas tocando el nombre
-    if (!m.mentionedJid[0] && text) { // 2. Si escribes @nombre
-        let userText = text.replace(/[@ ]/g, '')
-        // Busca en los participantes del grupo
-        let participants = m.isGroup? m.chat.split`-`[0] : m.sender
-        let group = await conn.groupMetadata(m.chat)
-        let found = group.participants.find(p => p.id.includes(userText))
-        who = found? found.id : m.sender
+    let who = m.mentionedJid[0] || m.quoted?.sender || m.sender // 1. Mencion/Responder
+
+    if (text) { // 2. Si escribes numero a mano
+        let num = text.replace(/[^0-9]/g, '') // Quita todo menos numeros
+        if (num.length > 8) who = num + '@s.whatsapp.net'
     }
 
     let user = `@${who.split('@')[0]}`
@@ -44,43 +41,24 @@ let handler = async (m, { conn, command, text }) => {
         case 'chipi': txt = `*[ CHIPI ]*\n\n📏 Confirmado:\n${user} sí es chipi` break
 
         case 'chiste':
-            let chistes = [
-                '👨‍👦 Hijo: Papá en el cole me dicen distraído\n👨 Papá: Hijo tú vives al lado 😂',
-                '💑 Amor me amas? Sí\nMucho? Sí\nCuánto? Como para no responder y ver el partido 📺',
-                '🦎 ¿Qué le dice una iguana a su hermana?\nIguanita tú 😂'
-            ]
+            let chistes = ['👨‍👦 Hijo: Papá me dicen distraído\n👨 Papá: Hijo tú vives al lado 😂']
             txt = `*[ CHISTE ]*\n\n${chistes[Math.random()*chistes.length|0]}`
         break
-
-        case 'facto':
-            let factos = ['💧 El agua moja', '😴 Dormir cura todo', '📅 Los lunes apestan']
-            txt = `*[ FACTO ]*\n\n${factos[Math.random()*factos.length|0]}`
-        break
-
-        case 'genio': txt = `*[ GENIO ]*\n\n${user}\n🧠 CI: 9999\n⚡ Nivel: Sobredotado` break
+        case 'facto': txt = `*[ FACTO ]*\n\n💧 El agua moja` break
+        case 'genio': txt = `*[ GENIO ]*\n\n${user}\n🧠 CI: 9999` break
         case 'kiss': txt = `*[ KISS ]*\n\n${user} te manda un besito 😘💋` break
         case 'love':
             let love = Math.floor(Math.random() * 100) + 1
-            let msg = love > 80? '💘 Amor verdadero' : love > 50? '💞 Hay química' : '👬 Amigos nomás'
-            txt = `*[ LOVE ]*\n\n${user}\n❤️ Compatibilidad: *${love}%*\n${msg}`
+            txt = `*[ LOVE ]*\n\n${user}\n❤️ Compatibilidad: *${love}%*`
         break
-        case 'personalidad':
-            let pers = ['😶 Tímido', '😈 Tóxico', '😇 Amable', '🤡 Chistoso', '🧠 Inteligente']
-            txt = `*[ PERSONALIDAD ]*\n\n${user}\nEres: *${pers[Math.random()*pers.length|0]}*`
-        break
-        case 'pregunta':
-            let preg = ['✅ Sí', '❌ No', '🤔 Tal vez', '🔥 Obvio', '🙅 Ni cagando']
-            txt = `*[ PREGUNTA ]*\n\nRespuesta:\n*${preg[Math.random()*preg.length|0]}*`
-        break
+        case 'personalidad': txt = `*[ PERSONALIDAD ]*\n\n${user}\nEres: *😎 Crack*` break
+        case 'pregunta': txt = `*[ PREGUNTA ]*\n\nRespuesta:\n*✅ Sí*` break
         case 'sorteo': txt = `*[ SORTEO ]*\n\n🎉 Ganador:\n${user}` break
-        case 'top': txt = `*[ TOP ]*\n\n🥇 El más activo\n🥈 El más chistoso\n🥉 El más rata` break
-        case 'verdad':
-            let verd = ['😨 ¿Cuál es tu mayor miedo?', '❤️ ¿A quién quieres?', '📏 ¿Cuánto mides?']
-            txt = `*[ VERDAD ]*\n\n${verd[Math.random()*verd.length|0]}`
-        break
+        case 'top': txt = `*[ TOP ]*\n\n🥇 El más activo\n🥈 El más chistoso` break
+        case 'verdad': txt = `*[ VERDAD ]*\n\n😨 ¿Cuál es tu mayor miedo?` break
     }
 
-    await conn.reply(m.chat, txt, m, { mentions: [who] }) // AQUI ESTA LA CLAVE
+    await conn.sendMessage(m.chat, { text: txt, mentions: [who] }, { quoted: m })
 }
 
 handler.help = ['quiensoy', 'abrazar', 'kabrazo', 'lesbiana', 'pajero', 'pajera', 'puto', 'puta', 'manco', 'manca', 'rata', 'prostituto', 'prostituta', 'sinpoto', 'sintetas', 'chipi', 'chiste', 'facto', 'genio', 'kiss', 'love', 'personalidad', 'pregunta', 'sorteo', 'top', 'verdad']
