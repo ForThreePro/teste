@@ -1,11 +1,16 @@
 let handler = async (m, { conn, command, text }) => {
-    let who = m.sender // Por defecto eres tú
+    let who = m.sender
 
-    if (m.mentionedJid && m.mentionedJid.length > 0) { // 1. Si mencionas tocando @
+    // PRIORIDAD 1: MENCION TOCANDO @
+    if (m.mentionedJid && m.mentionedJid[0]) {
         who = m.mentionedJid[0]
-    } else if (m.quoted && m.quoted.sender) { // 2. Si respondes a un mensaje
+    }
+    // PRIORIDAD 2: RESPONDER MENSAJE
+    else if (m.quoted) {
         who = m.quoted.sender
-    } else if (text) { // 3. Si pones número a mano
+    }
+    // PRIORIDAD 3: NUMERO A MANO
+    else if (text) {
         let num = text.replace(/[^0-9]/g, '')
         if (num.length > 8) who = num + '@s.whatsapp.net'
     }
@@ -62,7 +67,10 @@ let handler = async (m, { conn, command, text }) => {
         case 'verdad': txt = `*[ VERDAD ]*\n\n😨 ¿Cuál es tu mayor miedo?` break
     }
 
-    await conn.sendMessage(m.chat, { text: txt, mentions: [who] }, { quoted: m })
+    await conn.sendMessage(m.chat, {
+        text: txt,
+        mentions: [who]
+    }, { quoted: m })
 }
 
 handler.help = ['quiensoy', 'abrazar', 'kabrazo', 'lesbiana', 'pajero', 'pajera', 'puto', 'puta', 'manco', 'manca', 'rata', 'prostituto', 'prostituta', 'sinpoto', 'sintetas', 'chipi', 'chiste', 'facto', 'genio', 'kiss', 'love', 'personalidad', 'pregunta', 'sorteo', 'top', 'verdad']
