@@ -1,125 +1,181 @@
-import fetch from 'node-fetch'
-import FormData from 'form-data'
-import sharp from 'sharp' // NUEVO
+let handler = async (m, { conn, command, text, usedPrefix }) => {
+    let who = m.mentionedJid[0]? m.mentionedJid[0] : m.quoted? m.quoted.sender : m.sender
+    let name = await conn.getName(who)
+    let user = `@${m.sender.split('@')[0]}`
+    let target = `@${who.split('@')[0]}`
 
-const ADMIN = '51927174369'
+    // Frases random para que no se repita
+    const respuestas = {
+        quiensoy: [
+            `${user} eres una persona única ✨`,
+            `${user} eres el alma de la fiesta 🥳`,
+            `${user} eres misterioso/a... pero te quiero 👀`
+        ],
+        abrazar: [
+            `${user} le da un abrazo a ${target} 🤗`,
+            `*${user} abraza fuerte a ${target}* 🫂`,
+            `${user} + ${target} = abrazo grupal 💕`
+        ],
+        kabrazo: [
+            `*${user} te manda un k-abrazo coreano* 💖`,
+            `${user} abraza a ${target} estilo k-drama 🥺`,
+            `Abrazo virtual para ${target} de parte de ${user} 🫂`
+        ],
+        lesbiana: [
+            `Según mis cálculos... ${target} tiene 87% de ser lesbiana 🌈`,
+            `${target} *guiño guiño* 🏳️‍🌈`,
+            `El gaydar dice que ${target}... nah mentira 😂`
+        ],
+        pajero: [
+            `${target} eres bien pajero/a 😏`,
+            `Confirmado: ${target} vive en el 5vs5 🫠`,
+            `${target} *se sonroja*`
+        ],
+        pajera: [
+            `${target} eres bien pajera 😏`,
+            `Te descubrí ${target} 👀`,
+            `${target} modo avión activado ✈️`
+        ],
+        puto: [
+            `${target} PUTO 😡`,
+            `Cálmate ${target} jajaja`,
+            `${target} no seas así pues`
+        ],
+        puta: [
+            `${target} PUTA 😡`,
+            `Ya ${target} tranquilízate`,
+            `Jajaja ${target}`
+        ],
+        manco: [
+            `${target} eres bien manco en el juego 🎮`,
+            `Confirmo, ${target} no le da a nada`,
+            `${target} practica más noob`
+        ],
+        manca: [
+            `${target} eres bien manca 😂`,
+            `${target} ni en fácil le das`,
+            `F por ${target}`
+        ],
+        rata: [
+            `${target} RATA 🐀`,
+            `Te vi robar ${target}`,
+            `${target} devuelve lo que te llevaste`
+        ],
+        prostituto: [
+            `${target} cobras o qué? 💰`,
+            `${target} modo sugar activado`,
+            `Ofertas con ${target}`
+        ],
+        prostituta: [
+            `${target} cobras o qué? 💰`,
+            `${target} modo sugar activado`,
+            `Ofertas con ${target}`
+        ],
+        sinpoto: [
+            `${target} anda sin poto 😂`,
+            `Pobre ${target} plano`,
+            `${target} *se sienta en el aire*`
+        ],
+        sintetas: [
+            `${target} anda sin tetas 😂`,
+            `Tabla de planchar: ${target}`,
+            `${target} modo aeropuerto`
+        ],
+        chipi: [
+            `Chipi chipi chapa chapa ${target} 🎶`,
+            `Dubi dubi daba daba ${user}`,
+            `Chipi chipi ✨`
+        ],
+        chiste: [
+            `¿Qué le dice un techo a otro? Techo de menos 🏠`,
+            `¿Por qué la computadora fue al doctor? Porque tenía un virus 💻`,
+            `¿Qué hace una abeja en el baño? Zzzzz 😂`
+        ],
+        facto: [
+            `Facto: Dormir es lo mejor del mundo 😴`,
+            `Facto: El lunes no debería existir`,
+            `Facto: El café cura todo ☕`
+        ],
+        genio: [
+            `${user} eres un genio 🧠`,
+            `Albert Einstein le dice a ${user}: me ganaste`,
+            `CI de ${user}: 9999`
+        ],
+        kiss: [
+            `${user} le da un beso a ${target} 😘`,
+            `*${user} besa a ${target}* 💋`,
+            `${user} + ${target} = 💕`
+        ],
+        love: [
+            `${user} te ama ${target} ❤️`,
+            `El amor está en el aire... entre ${user} y ${target}`,
+            `Shippeo: ${user} x ${target} 💘`
+        ],
+        personalidad: [
+            `${target} tu personalidad es: Caótica pero querible 😈`,
+            `${target} eres: Tierno pero peligroso 🥺`,
+            `${target} eres: 90% sarcasmo 10% ternura`
+        ],
+        pregunta: [
+            `Sí ✅`,
+            `No ❌`,
+            `Tal vez 🤔`,
+            `Pregúntame después ⏰`,
+            `Obvio que sí 😌`
+        ],
+        sorteo: [
+            `El ganador es... ${target} 🎉`,
+            `Sorteo: Gana ${user} 🏆`,
+            `Nadie ganó... intenten de nuevo 😂`
+        ],
+        top: [
+            `Top 1: ${user} 👑`,
+            `Top 5 del grupo:\n1. ${user}\n2. ${target}\n3. Alguien\n4. Otro\n5. Yo`,
+            `Tú eres el top ${target} 😎`
+        ],
+        verdad: [
+            `Verdad o reto: ¿Cuál es tu mayor secreto? 👀`,
+            `Verdad: ¿A quién quieres besar? 😏`,
+            `Verdad: ¿Cuántos ex tienes?`
+        ]
+    }
 
-const APIS = [
-    'bzCVvJUG2sRhDB3gwDZEZfDp',
-    'vfFJNa8MThy7J1EVKvPSv9eo',
-    'sarB51ABXcvLMRpQFkE1QA4f',
-    'MJ1CaPUipeqyVC7HW8HqkXJE',
-    '4AvZ9znyHsMFveZ4yBPW4T9z'
+    if (!respuestas[command]) return
+
+    let res = respuestas[command][Math.floor(Math.random() * respuestas[command].length)]
+    await conn.reply(m.chat, res, m, { mentions: [who, m.sender] })
+    await conn.sendMessage(m.chat, { react: { text: '✨', key: m.key } })
+}
+
+handler.help = [
+'quiensoy',
+'abrazar ( @mencionar o responder )',
+'kabrazo ( @mencionar o responder )',
+'lesbiana ( @mencionar o responder )',
+'pajero ( @mencionar o responder )',
+'pajera ( @mencionar o responder )',
+'puto ( @mencionar o responder )',
+'puta ( @mencionar o responder )',
+'manco ( @mencionar o responder )',
+'manca ( @mencionar o responder )',
+'rata ( @mencionar o responder )',
+'prostituto ( @mencionar o responder )',
+'prostituta ( @mencionar o responder )',
+'sinpoto ( @mencionar o responder )',
+'sintetas ( @mencionar o responder )',
+'chipi',
+'chiste',
+'facto',
+'genio',
+'kiss ( @mencionar o responder )',
+'love ( @mencionar o responder )',
+'personalidad ( @mencionar o responder )',
+'pregunta',
+'sorteo ( @mencionar o responder )',
+'top ( @mencionar o responder )',
+'verdad'
 ]
+handler.tags = ['diversión']
+handler.command = ['quiensoy','abrazar','kabrazo','lesbiana','pajero','pajera','puto','puta','manco','manca','rata','prostituto','prostituta','sinpoto','sintetas','chipi','chiste','facto','genio','kiss','love','personalidad','pregunta','sorteo','top','verdad']
 
-let apiIndex = 0
-let solicitudes = new Map()
-
-let handler = async (m, { conn, usedPrefix, command, args }) => {
-    let q = m.quoted? m.quoted : m
-    let mime = (q.msg || q).mimetype || ''
-
-    if (command === 'removebg') {
-        if (!mime ||!mime.startsWith('image/')) return m.reply(`Responde a una imagen con: *${usedPrefix}removebg*`)
-        return procesar(m, conn, q, 'preview')
-    }
-
-    if (command === 'removebg1') {
-        if (!mime ||!mime.startsWith('image/')) return m.reply(`Responde a una imagen con: *${usedPrefix}removebg1*`)
-        let buffer = await q.download()
-        let id = Date.now().toString()
-        solicitudes.set(id, { buffer, user: m.sender, chat: m.chat })
-
-        await conn.sendMessage(ADMIN + '@s.whatsapp.net', {
-            text: `📩 *NUEVA SOLICITUD HD*\n*Usuario:* @${m.sender.split('@')[0]}\n*ID:* ${id}\n\n.aceptarhd ${id} = Aprobar\n.rechazarhd ${id} = Rechazar`,
-            mentions: [m.sender]
-        })
-        return m.reply(`📩 *Solicitud enviada al admin*\nEspera aprobación. ID: ${id}`)
-    }
-
-    if (command === 'aceptarhd') {
-        if (m.sender.split('@')[0]!== ADMIN) return
-        let id = args[0]
-        let sol = solicitudes.get(id)
-        if (!sol) return m.reply('❌ ID no encontrado')
-        await m.reply('✅ Aprobado. Procesando HD...')
-        await procesar(sol, conn, { download: () => sol.buffer }, 'hd')
-        solicitudes.delete(id)
-        return
-    }
-
-    if (command === 'rechazarhd') {
-        if (m.sender.split('@')[0]!== ADMIN) return
-        let id = args[0]
-        if (solicitudes.has(id)) {
-            solicitudes.delete(id)
-            return m.reply(`❌ Solicitud ${id} rechazada`)
-        }
-    }
-}
-
-async function procesar(m, conn, q, modo) {
-    try {
-        await m.react('⏳')
-        let buffer = await q.download()
-        let imgBuffer = await removeBg(buffer, modo)
-        
-        // CLAVE: Convertir a WEBP con transparencia para que WhatsApp lo respete
-        const webpBuffer = await sharp(imgBuffer)
-            .resize(512, 512, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
-            .webp({ lossless: true, alphaQuality: 100 })
-            .toBuffer()
-
-        await m.react('✅')
-
-        // OPCION A: Mandar como STICKER - Se ve transparente en el chat
-        await conn.sendMessage(m.chat, { sticker: webpBuffer }, { quoted: m })
-
-        // OPCION B: También mandar como documento PNG original por si lo quieren descargar
-        await conn.sendMessage(m.chat, {
-            document: imgBuffer,
-            fileName: `nobg_${Date.now()}.png`,
-            mimetype: 'image/png',
-            caption: `✅ *Fondo eliminado* | *Modo:* ${modo === 'hd'? '🔥 HD' : '💎 Preview'}\n*Nota:* Descarga el doc para PNG transparente real`
-        }, { quoted: m })
-
-    } catch (error) {
-        console.error(error)
-        await m.react('❌')
-        m.reply(`❌ *ERROR:* ${error.message}`)
-    }
-}
-
-async function removeBg(buffer, modoElegido) {
-    let intentos = 0
-    while(intentos < APIS.length) {
-        let key = APIS[apiIndex]
-        try {
-            let form = new FormData()
-            form.append('image_file', buffer)
-            form.append('size', modoElegido)
-
-            let res = await fetch('https://api.remove.bg/v1.0/removebg', {
-                method: 'POST',
-                headers: { 'X-Api-Key': key },
-                body: form,
-                timeout: 30000
-            })
-
-            if(res.ok) {
-                let result = await res.buffer()
-                apiIndex = (apiIndex + 1) % APIS.length
-                return result
-            }
-        } catch(e){}
-        apiIndex = (apiIndex + 1) % APIS.length
-        intentos++
-    }
-    throw new Error(`Todas las 5 keys están sin créditos`)
-}
-
-handler.help = ['removebg', 'removebg1']
-handler.tags = ['tools', 'ai']
-handler.command = /^(removebg|removebg1|aceptarhd|rechazarhd)$/i
-handler.limit = true
 export default handler
