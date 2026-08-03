@@ -1,10 +1,17 @@
-let handler = async (m, { conn, command, text, usedPrefix }) => {
-    let who = m.mentionedJid[0]? m.mentionedJid[0] : m.quoted? m.quoted.sender : m.sender
-    let name = await conn.getName(who)
-    let user = `@${m.sender.split('@')[0]}`
-    let target = `@${who.split('@')[0]}`
+let handler = async (m, { conn, command, text }) => {
+    // Solo agarra mención real o si respondes
+    let who = m.mentionedJid && m.mentionedJid[0]? m.mentionedJid[0] : m.quoted? m.quoted.sender : null
 
-    // Frases random para que no se repita
+    // Si el comando necesita persona y no hay, avisar
+    let necesitaPersona = ['abrazar','kabrazo','lesbiana','pajero','pajera','puto','puta','manco','manca','rata','prostituto','prostituta','sinpoto','sintetas','kiss','love','personalidad','sorteo','top'].includes(command)
+
+    if (necesitaPersona &&!who) {
+        return m.reply(`❌ Tienes que *mencionar a alguien* o *responder a su mensaje*\n\nEjemplo:.abrazar @Pepito`)
+    }
+
+    let user = `@${m.sender.split('@')[0]}`
+    let target = who? `@${who.split('@')[0]}` : user
+
     const respuestas = {
         quiensoy: [
             `${user} eres una persona única ✨`,
@@ -26,124 +33,32 @@ let handler = async (m, { conn, command, text, usedPrefix }) => {
             `${target} *guiño guiño* 🏳️‍🌈`,
             `El gaydar dice que ${target}... nah mentira 😂`
         ],
-        pajero: [
-            `${target} eres bien pajero/a 😏`,
-            `Confirmado: ${target} vive en el 5vs5 🫠`,
-            `${target} *se sonroja*`
-        ],
-        pajera: [
-            `${target} eres bien pajera 😏`,
-            `Te descubrí ${target} 👀`,
-            `${target} modo avión activado ✈️`
-        ],
-        puto: [
-            `${target} PUTO 😡`,
-            `Cálmate ${target} jajaja`,
-            `${target} no seas así pues`
-        ],
-        puta: [
-            `${target} PUTA 😡`,
-            `Ya ${target} tranquilízate`,
-            `Jajaja ${target}`
-        ],
-        manco: [
-            `${target} eres bien manco en el juego 🎮`,
-            `Confirmo, ${target} no le da a nada`,
-            `${target} practica más noob`
-        ],
-        manca: [
-            `${target} eres bien manca 😂`,
-            `${target} ni en fácil le das`,
-            `F por ${target}`
-        ],
-        rata: [
-            `${target} RATA 🐀`,
-            `Te vi robar ${target}`,
-            `${target} devuelve lo que te llevaste`
-        ],
-        prostituto: [
-            `${target} cobras o qué? 💰`,
-            `${target} modo sugar activado`,
-            `Ofertas con ${target}`
-        ],
-        prostituta: [
-            `${target} cobras o qué? 💰`,
-            `${target} modo sugar activado`,
-            `Ofertas con ${target}`
-        ],
-        sinpoto: [
-            `${target} anda sin poto 😂`,
-            `Pobre ${target} plano`,
-            `${target} *se sienta en el aire*`
-        ],
-        sintetas: [
-            `${target} anda sin tetas 😂`,
-            `Tabla de planchar: ${target}`,
-            `${target} modo aeropuerto`
-        ],
-        chipi: [
-            `Chipi chipi chapa chapa ${target} 🎶`,
-            `Dubi dubi daba daba ${user}`,
-            `Chipi chipi ✨`
-        ],
-        chiste: [
-            `¿Qué le dice un techo a otro? Techo de menos 🏠`,
-            `¿Por qué la computadora fue al doctor? Porque tenía un virus 💻`,
-            `¿Qué hace una abeja en el baño? Zzzzz 😂`
-        ],
-        facto: [
-            `Facto: Dormir es lo mejor del mundo 😴`,
-            `Facto: El lunes no debería existir`,
-            `Facto: El café cura todo ☕`
-        ],
-        genio: [
-            `${user} eres un genio 🧠`,
-            `Albert Einstein le dice a ${user}: me ganaste`,
-            `CI de ${user}: 9999`
-        ],
-        kiss: [
-            `${user} le da un beso a ${target} 😘`,
-            `*${user} besa a ${target}* 💋`,
-            `${user} + ${target} = 💕`
-        ],
-        love: [
-            `${user} te ama ${target} ❤️`,
-            `El amor está en el aire... entre ${user} y ${target}`,
-            `Shippeo: ${user} x ${target} 💘`
-        ],
-        personalidad: [
-            `${target} tu personalidad es: Caótica pero querible 😈`,
-            `${target} eres: Tierno pero peligroso 🥺`,
-            `${target} eres: 90% sarcasmo 10% ternura`
-        ],
-        pregunta: [
-            `Sí ✅`,
-            `No ❌`,
-            `Tal vez 🤔`,
-            `Pregúntame después ⏰`,
-            `Obvio que sí 😌`
-        ],
-        sorteo: [
-            `El ganador es... ${target} 🎉`,
-            `Sorteo: Gana ${user} 🏆`,
-            `Nadie ganó... intenten de nuevo 😂`
-        ],
-        top: [
-            `Top 1: ${user} 👑`,
-            `Top 5 del grupo:\n1. ${user}\n2. ${target}\n3. Alguien\n4. Otro\n5. Yo`,
-            `Tú eres el top ${target} 😎`
-        ],
-        verdad: [
-            `Verdad o reto: ¿Cuál es tu mayor secreto? 👀`,
-            `Verdad: ¿A quién quieres besar? 😏`,
-            `Verdad: ¿Cuántos ex tienes?`
-        ]
+        pajero: [`${target} eres bien pajero/a 😏`, `Confirmado: ${target} vive en el 5vs5 🫠`],
+        pajera: [`${target} eres bien pajera 😏`, `Te descubrí ${target} 👀`],
+        puto: [`${target} PUTO 😡`, `Cálmate ${target} jajaja`],
+        puta: [`${target} PUTA 😡`, `Ya ${target} tranquilízate`],
+        manco: [`${target} eres bien manco en el juego 🎮`, `Confirmo, ${target} no le da a nada`],
+        manca: [`${target} eres bien manca 😂`, `${target} ni en fácil le das`],
+        rata: [`${target} RATA 🐀`, `Te vi robar ${target}`],
+        prostituto: [`${target} cobras o qué? 💰`, `${target} modo sugar activado`],
+        prostituta: [`${target} cobras o qué? 💰`, `${target} modo sugar activado`],
+        sinpoto: [`${target} anda sin poto 😂`, `Pobre ${target} plano`],
+        sintetas: [`${target} anda sin tetas 😂`, `Tabla de planchar: ${target}`],
+        chipi: [`Chipi chipi chapa chapa ${target} 🎶`, `Dubi dubi daba daba ${user}`],
+        chiste: [`¿Qué le dice un techo a otro? Techo de menos 🏠`, `¿Por qué la compu fue al doctor? Virus 💻`],
+        facto: [`Facto: Dormir es lo mejor 😴`, `Facto: El lunes no debería existir`],
+        genio: [`${user} eres un genio 🧠`, `CI de ${user}: 9999`],
+        kiss: [`${user} le da un beso a ${target} 😘`, `*${user} besa a ${target}* 💋`],
+        love: [`${user} te ama ${target} ❤️`, `Shippeo: ${user} x ${target} 💘`],
+        personalidad: [`${target} tu personalidad es: Caótica pero querible 😈`, `${target} eres: 90% sarcasmo 10% ternura`],
+        pregunta: [`Sí ✅`, `No ❌`, `Tal vez 🤔`, `Pregúntame después ⏰`],
+        sorteo: [`El ganador es... ${target} 🎉`, `Sorteo: Gana ${user} 🏆`],
+        top: [`Top 1: ${user} 👑`, `Top 5:\n1. ${user}\n2. ${target}`],
+        verdad: [`Verdad: ¿Cuál es tu mayor secreto? 👀`, `Verdad: ¿A quién quieres besar? 😏`]
     }
 
-    if (!respuestas[command]) return
-
     let res = respuestas[command][Math.floor(Math.random() * respuestas[command].length)]
-    await conn.reply(m.chat, res, m, { mentions: [who, m.sender] })
+    await conn.reply(m.chat, res, m, { mentions: who? [who, m.sender] : [m.sender] })
     await conn.sendMessage(m.chat, { react: { text: '✨', key: m.key } })
 }
 
