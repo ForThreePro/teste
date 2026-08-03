@@ -59,7 +59,7 @@ let menuTexto = `🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 �
 
 ──愛 *INFORMACION DEL BOT* ╏ 💥
 *Usuarios*: ${totalUsers} | *Comandos*: ${pluginsCount}
-*Creador*: Whois Yalli co
+*Creador*: Whois Yallico
 
  ׅ 埃斯 : 𝖲𝖨𝖲𝖳𝖤𝖬𝖠 ﹙ 🌑 ﹚
 > ﹒ RAM: ${ram}mb / ${totalram}gb
