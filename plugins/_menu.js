@@ -9,10 +9,16 @@ buscadores: 'SEARCH', descargas: 'DOWNLOADER', grupo: 'GRUPOS',
 group: 'GRUPO', gacha: 'GROUP', ia: 'IA', info: 'INFO', sticker: 'STICKER',
 }
 
+// AQUÍ DEFINES EL EMOJI FIJO PARA CADA CATEGORIA
+// Si agregas una categoría nueva, ponle aquí su emoji y ya no cambia
 const ICONOS_CATEGORIA = {
 config: '⚙️', owner: '☕', fun: '🎋', ff: '🍃', buscadores: '🔎',
 descargas: '🌷', grupo: '🍒', grupos: '🍒', gacha: '👥', ia: '💭',
-info: '☁️', sticker: '🎐', main: '🌸', tools: '🧩', sorteos: '🎁', joda: '😂'
+info: '☁️', sticker: '🎐', main: '🌸', tools: '🧩', sorteos: '🎁', joda: '😂',
+// NUEVAS CATEGORIAS - AGREGALAS AQUI
+rpg: '💸', anime: '🍥', game: '🪩', nsfw: '🦑', canvas: '🫟',
+effects: '🌪️', frases: '🍯', reg: '🪸', shop: '🪎', socket: '🪷',
+image: '🌳', internet: '📡', onoff: '⚙️', dzm: '🎨'
 }
 
 let handler = async (m, { conn }) => {
@@ -85,7 +91,9 @@ for (const tag of tagsOrdenados) {
   const cmds = [...set].sort()
 
   const nombreCat = CATEGORY_META[tag] || tag.toUpperCase()
-  const icono = ICONOS_CATEGORIA[tag] || '🌟'
+
+  // Si no tiene emoji definido, usa este por defecto y ya no cambia
+  const icono = ICONOS_CATEGORIA[tag] || '📁'
 
   menuTexto += `.⃟𖥔 ݁. 𖦹˙— \`\`${nombreCat}\`\` —˙𖦹.${icono}꒷\n`
   for (const c of cmds) {
@@ -108,7 +116,7 @@ menuTexto += `━━━━━━━━━━━
 await conn.sendMessage(m.chat, {
   image: { url: IMG_MENU },
   caption: menuTexto.trim(),
-  mentions: [m.sender, '51XXXXXXXXX@s.whatsapp.net'] // cambia por tu numero en formato jid si quieres que te mencionen
+  mentions: [m.sender]
 }, { quoted: m })
 
 } catch (e) {
