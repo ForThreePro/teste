@@ -47,7 +47,7 @@ for (const plugin of Object.values(global.plugins || {})) {
 const userName = m.pushName || 'Usuario'
 const IMG_MENU = 'https://files.evogb.win/INtgbw.jpg'
 
-// INICIO NUEVO
+// INICIO
 let menuTexto = `🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
 
 ⤷ ┇ 𝐕𝐄𝐑𝐒𝐈𝐎𝐍 ﹒ 3.0 DBZ ：✿ 。
@@ -59,7 +59,8 @@ let menuTexto = `🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 �
 
 ──愛 *INFORMACION DEL BOT* ╏ 💥
 *Usuarios*: ${totalUsers} | *Comandos*: ${pluginsCount}
-*Creador*: Whois Yallico
+*Owner*: @whois.yallico
+*Numero*: +51 927 174 369
 
  ׅ 埃斯 : 𝖲𝖨𝖲𝖳𝖤𝖬𝖠 ﹙ 🌑 ﹚
 > ﹒ RAM: ${ram}mb / ${totalram}gb
@@ -86,19 +87,20 @@ for (const tag of tagsOrdenados) {
   const nombreCat = CATEGORY_META[tag] || tag.toUpperCase()
   const icono = ICONOS_CATEGORIA[tag] || '🌟'
 
-  menuTexto += `.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.${icono}꒷\n`
+  menuTexto += `.⃟𖥔 ݁. 𖦹˙— \`\`${nombreCat}\`\` —˙𖦹.${icono}꒷\n`
   for (const c of cmds) {
     menuTexto += ` ${icono} ➛.${c}\n`
   }
   menuTexto += ` ㅤ└──.✦ ── ⊰ ̟!!.✦. ˙\n\n`
 }
 
-// FINAL NUEVO
+// FINAL
 menuTexto += `━━━━━━━━━━━
 🐉 *SON GOKU PREM BOT* 🐉
-*Version*: 3.0 DBZ Masculino
+*Owner*: @whois.yallico
+*Contacto*: +51 927 174 369
+*Version*: 3.0 DBZ
 *Power*: Nivel Dios
-*Web*: github.com
 
 > "No subestimes mi poder... o serás polvo" ⚡
 ━━━━━━━━━━━`
@@ -106,7 +108,7 @@ menuTexto += `━━━━━━━━━━━
 await conn.sendMessage(m.chat, {
   image: { url: IMG_MENU },
   caption: menuTexto.trim(),
-  mentions: [m.sender]
+  mentions: [m.sender, '51XXXXXXXXX@s.whatsapp.net'] // cambia por tu numero en formato jid si quieres que te mencionen
 }, { quoted: m })
 
 } catch (e) {
