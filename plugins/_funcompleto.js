@@ -1,12 +1,12 @@
 let handler = async (m, { conn, command, text }) => {
-    let who = m.mentionedJid[0] || m.quoted?.sender || m.sender // 1. Mencion/Responder
+    let who = m.mentionedJid[0] || m.quoted?.sender || m.sender
 
-    if (text) { // 2. Si escribes numero a mano
-        let num = text.replace(/[^0-9]/g, '') // Quita todo menos numeros
+    if (text) {
+        let num = text.replace(/[^0-9]/g, '') // Quita + espacios letras, deja solo numeros
         if (num.length > 8) who = num + '@s.whatsapp.net'
     }
 
-    let user = `@${who.split('@')[0]}`
+    let user = `@${who.split('@')[0]}` // Esto genera @233465966534833
 
     let txt = ''
 
