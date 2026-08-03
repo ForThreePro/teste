@@ -21,23 +21,16 @@ info: 'INFO',
 sticker: 'STICKER',
 }
 
-// Emojis random para que cambien cada.menu
-const EMOJIS_RANDOM = ['🔥','⚡','💥','🐉','🌟','💫','🌙','☄️','🌈','🍓','👑','💀','⚔️','🛡️','🌌']
+// Iconos aesthetic por categoria. Si no existe usa uno random
 const ICONOS_CATEGORIA = {
-config: '⚙️', owner: '👑', fun: '😈', ff: '🔫', buscadores: '🔍',
-descargas: '📥', grupo: '⚔️', grupos: '🛡️', gacha: '👥', ia: '🤖',
-info: 'ℹ️', sticker: '🎨', main: '🌟', tools: '🧰', sorteos: '🎁', joda: '😂'
+config: '⚙️', owner: '☕', fun: '🎋', ff: '🍃', buscadores: '🔎',
+descargas: '🌷', grupo: '🍒', grupos: '🍒', gacha: '👥', ia: '💭',
+info: '☁️', sticker: '🎐', main: '🌸', tools: '🧩', sorteos: '🎁', joda: '😂'
 }
 
 let handler = async (m, { conn }) => {
 try {
 await conn.sendMessage(m.chat, { react: { text: '⚡', key: m.key } })
-
-// Emojis random
-const eTop = EMOJIS_RANDOM[Math.floor(Math.random() * EMOJIS_RANDOM.length)]
-const eUser = EMOJIS_RANDOM[Math.floor(Math.random() * EMOJIS_RANDOM.length)]
-const eStats = EMOJIS_RANDOM[Math.floor(Math.random() * EMOJIS_RANDOM.length)]
-const eSys = EMOJIS_RANDOM[Math.floor(Math.random() * EMOJIS_RANDOM.length)]
 
 const fecha = moment.tz('America/Lima').format('dddd')
 const fecha2 = moment.tz('America/Lima').format('DD [de] MMMM [de] YYYY')
@@ -51,7 +44,7 @@ const totalram = (os.totalmem() / 1024 / 1024 / 1024).toFixed(2)
 const pluginsCount = Object.values(global.plugins || {}).filter(p =>!p?.disabled).length
 const totalUsers = Object.keys(global.db.data.users || {}).length
 
-// AHORA DETECTA TODAS LAS CATEGORIAS
+// DETECTA TODAS LAS CATEGORIAS AUTOMATICO
 const byTag = {}
 for (const plugin of Object.values(global.plugins || {})) {
   if (plugin.disabled) continue
@@ -59,7 +52,7 @@ for (const plugin of Object.values(global.plugins || {})) {
   const helps = Array.isArray(plugin.help)? plugin.help : (plugin.help? [plugin.help] : [])
   for (const tag of tags) {
     const t = tag.toLowerCase()
-    if (!byTag[t]) byTag[t] = new Set() // ya no filtra por CATEGORY_META
+    if (!byTag[t]) byTag[t] = new Set()
     for (const h of helps) if (typeof h === 'string' && h.trim()) byTag[t].add(h.trim())
   }
 }
@@ -67,27 +60,27 @@ for (const plugin of Object.values(global.plugins || {})) {
 const userName = m.pushName || 'Usuario'
 const IMG_MENU = 'https://files.evogb.win/INtgbw.jpg'
 
-let menuTexto = `*${eTop} SON GOKU PREM ${eTop}*
+let menuTexto = `ᯇ 𝗕𝗜𝗘𝗡𝗩𝗘𝗡𝗜𝗗𝗢 : ୧
 
-⤷ *SYSTEM*: v3.0 DBZ
-╰─ *ONLINE* • ${horas}h ${minutos}m ${segundos}s
+ ⤷ ┇ version ﹒ 3.0 DBZ ：✿ 。
+꒰ ◞⁺⊹ ．online public •
 
-╭─「 ${eUser} USUARIO 」─╮
-│ 💀 @${userName}
-│ 💬 "Conectado. Listo para dominar"
-╰────────────────╯
+ ꒱ ׁ. ᘏ 𝘂𝘀𝘂𝗮𝗿𝗶𝗼 ׅ 𝆬 ָ֢ ෆ
+🦦 ࣪ ꕀ @${userName}. ˚. ᵎᵎ
+> Este es el menu de *SON GOKU PREM* (𝐏𝐫𝐞𝐦-𝐁𝐨𝐭)
 
-──${eStats} *ESTADISTICAS* ${eStats}──
-*👥 Usuarios*: ${totalUsers}
-*📜 Comandos*: ${pluginsCount}
-*💾 RAM*: ${ram}mb
-*🌐 Servidor*: ${totalram}gb
+──愛 *SYSTEM* ╏ 💀
+*ONLINE*: ${horas}h ${minutos}m ${segundos}s
 
-──${eSys} *SISTEMA* ${eSys}──
-*📅 Dia*: ${fecha}
-*📆 Fecha*: ${fecha2}
-*🕐 Hora*: ${hora}
-*📡 Ping*: ${Math.round(performance.now())}ms
+ ׅ 埃斯 : 𝖨𝗇𝖿𝗈 ﹙ 🌑 ﹚
+> ﹒ @owner ─ creador
+      ᶻz　*${totalUsers}* users　⋌
+
+© ❛ *system*. android
+名 ─ *ram:* ${ram}mb / ${totalram}gb﹔
+𖡎 ָ֢ ‍ँ 𝆬 ׅ ׁ ꕀ ׁ ׅ.
+
+> ❍ 𝖣𝗂𝗌𝖿𝗋𝗎𝗍𝖺 𝖽𝖾 𝗅𝗈𝗌 𝖼𝗈𝗆𝖺𝗇𝖽𝗈𝗌 𝗊𝗎𝖾 𝖾𝗅 𝖻𝗈𝗍 𝗈𝖿𝗋𝖾𝖼𝖾 𝗉𝖺𝗋𝖺 𝗍𝗂
 
 `
 
@@ -103,23 +96,23 @@ for (const tag of tagsOrdenados) {
   if (!set || set.size === 0) continue
   const cmds = [...set].sort()
 
-  // Nombre bonito: si está en CATEGORY_META lo usa, si no pone el tag en mayúsculas
   const nombreCat = CATEGORY_META[tag] || tag.toUpperCase()
-  const icono = ICONOS_CATEGORIA[tag] || EMOJIS_RANDOM[Math.floor(Math.random() * EMOJIS_RANDOM.length)]
+  const icono = ICONOS_CATEGORIA[tag] || '🌟'
 
-  menuTexto += `\n╭─「 ${icono} ${nombreCat} 」─╮\n`
-  menuTexto += cmds.map(c => `│ *${icono}.${c}*`).join('\n') + '\n'
-  menuTexto += `╰─────────────────╯\n`
+  menuTexto += `.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.${icono}꒷\n`
+  for (const c of cmds) {
+    menuTexto += ` ${icono} ➛.${c}\n`
+  }
+  menuTexto += ` ㅤ└──.✦ ── ⊰ ̟!!.✦. ˙\n\n`
 }
 
-menuTexto += `
-*━━━━━━━━━━━━━━*
+menuTexto += `*━━━━━━━━━━━━━━*
 *BOT*: SON GOKU PREM
-*CREADOR*: Whois Yalli co
-*VERSION*: 3.0 DBZ Masculino
-*WEB*: github.com
+*CREADOR*: Whois Yallico
+*VERSION*: 3.0 DBZ
+*FECHA*: ${fecha}, ${fecha2} | ${hora}
 
-> "Conectado al sistema. Domina o muere" ${eTop}
+> "Conectado al sistema. Domina o muere"
 *━━━━━━━━━━━━━━*`
 
 await conn.sendMessage(m.chat, {
