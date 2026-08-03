@@ -56,12 +56,12 @@ let handler = async (m, { conn, command, text, participants }) => {
             `⚰️ ${target} fue eliminado por ${user}\nGG`
         ],
         insultar: [
-            `🤡 ${user} a ${target}: Eres Tan Feo Q Ni Tu Vieja Acepta Q Eres Su Hij@`,
-            `💀 ${user} a ${target}: Al Parecer Naciste Por El Qlo Por Q Tremendo Baboso Que Eres`,
-            `🐒 ${user} a ${target}: Te Hubieran Abortado En Vez De Tenerte`,
-            `🧠 ${user} a ${target}: Bonita De Cara Pero Nada De Qlo`,
-            `📉 ${user} a ${target}: Si Ser Linda Fuera Delito Estarías Libre`,
-            `🤦 ${user} a ${target}: Eres Tan Bruto Que Llegaste Tarde Ala Repartición De Cerebro`,
+            `🤡 ${user} a ${target}: Eres más perdido que señal de wifi en el baño`,
+            `💀 ${user} a ${target}: Tu IQ es negativo, felicidades`,
+            `🐒 ${user} a ${target}: Pareces lag en forma de persona`,
+            `🧠 ${user} a ${target}: Te faltan neuronas y te sobra cara`,
+            `📉 ${user} a ${target}: Eres el error 404 de la evolución`,
+            `🤦 ${user} a ${target}: Si la estupidez doliera, estarías en UCI`,
             `💩 ${user} a ${target}: Tienes menos chispa que foco fundido`,
             `🦥 ${user} a ${target}: Eres más lento que tortuga con wifi`,
             `🥔 ${user} a ${target}: Tienes cara de papa sin sal`,
