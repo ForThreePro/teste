@@ -1,5 +1,10 @@
-let handler = async (m, { conn, command }) => {
-    let who = m.mentionedJid[0]? m.mentionedJid[0] : m.sender
+
+let handler = async (m, { conn, command, text }) => {
+    let who = m.mentionedJid[0] || m.sender // Si mencionas a alguien real, lo agarra
+    if (!m.mentionedJid[0] && text) { // Si escribes @nombre sin mencionarlo
+        let user = text.replace(/[@ ]/g, '')
+        who = user + '@s.whatsapp.net'
+    }
     let user = `@${who.split('@')[0]}`
 
     let txt = ''
