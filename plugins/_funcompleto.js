@@ -1,12 +1,16 @@
 let handler = async (m, { conn, command, text }) => {
-    let who = m.mentionedJid[0] || m.quoted?.sender || m.sender
+    let who = m.sender // Por defecto eres tú
 
-    if (text) {
-        let num = text.replace(/[^0-9]/g, '') // Quita + y espacios
+    if (m.mentionedJid && m.mentionedJid.length > 0) { // 1. Si mencionas tocando @
+        who = m.mentionedJid[0]
+    } else if (m.quoted && m.quoted.sender) { // 2. Si respondes a un mensaje
+        who = m.quoted.sender
+    } else if (text) { // 3. Si pones número a mano
+        let num = text.replace(/[^0-9]/g, '')
         if (num.length > 8) who = num + '@s.whatsapp.net'
     }
 
-    let nombre = '@' + who.split('@')[0] // Esto genera @233465966534833
+    let nombre = '@' + who.split('@')[0]
 
     let txt = ''
 
@@ -58,10 +62,7 @@ let handler = async (m, { conn, command, text }) => {
         case 'verdad': txt = `*[ VERDAD ]*\n\n😨 ¿Cuál es tu mayor miedo?` break
     }
 
-    await conn.sendMessage(m.chat, {
-        text: txt,
-        mentions: [who] // AQUI LE DECIMOS A WHATSAPP A QUIEN MENCIONAR
-    }, { quoted: m })
+    await conn.sendMessage(m.chat, { text: txt, mentions: [who] }, { quoted: m })
 }
 
 handler.help = ['quiensoy', 'abrazar', 'kabrazo', 'lesbiana', 'pajero', 'pajera', 'puto', 'puta', 'manco', 'manca', 'rata', 'prostituto', 'prostituta', 'sinpoto', 'sintetas', 'chipi', 'chiste', 'facto', 'genio', 'kiss', 'love', 'personalidad', 'pregunta', 'sorteo', 'top', 'verdad']
