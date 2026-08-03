@@ -1,38 +1,26 @@
 let handler = async (m, { conn, command, text }) => {
-    // Solo agarra mención real o si respondes
-    let who = m.mentionedJid && m.mentionedJid[0]? m.mentionedJid[0] : m.quoted? m.quoted.sender : null
 
-    // Si el comando necesita persona y no hay, avisar
+    // DETECTAR USUARIO DE 3 FORMAS
+    let who = m.mentionedJid && m.mentionedJid[0] // 1. Mención @
+            || m.quoted? m.quoted.sender // 2. Respondiendo
+            || text.replace(/[^0-9]/g, '') + '@s.whatsapp.net' // 3. Número
+
+    if (who === '@s.whatsapp.net') who = null // Si no puso número válido
+
     let necesitaPersona = ['abrazar','kabrazo','lesbiana','pajero','pajera','puto','puta','manco','manca','rata','prostituto','prostituta','sinpoto','sintetas','kiss','love','personalidad','sorteo','top'].includes(command)
 
     if (necesitaPersona &&!who) {
-        return m.reply(`❌ Tienes que *mencionar a alguien* o *responder a su mensaje*\n\nEjemplo:.abrazar @Pepito`)
+        return m.reply(`❌ Usa una de estas 3 formas:\n1..abrazar @mencionar\n2. Responder +.abrazar\n3..abrazar 519123456`)
     }
 
     let user = `@${m.sender.split('@')[0]}`
-    let target = who? `@${who.split('@')[0]}` : user
+    let target = `@${who.split('@')[0]}`
 
     const respuestas = {
-        quiensoy: [
-            `${user} eres una persona única ✨`,
-            `${user} eres el alma de la fiesta 🥳`,
-            `${user} eres misterioso/a... pero te quiero 👀`
-        ],
-        abrazar: [
-            `${user} le da un abrazo a ${target} 🤗`,
-            `*${user} abraza fuerte a ${target}* 🫂`,
-            `${user} + ${target} = abrazo grupal 💕`
-        ],
-        kabrazo: [
-            `*${user} te manda un k-abrazo coreano* 💖`,
-            `${user} abraza a ${target} estilo k-drama 🥺`,
-            `Abrazo virtual para ${target} de parte de ${user} 🫂`
-        ],
-        lesbiana: [
-            `Según mis cálculos... ${target} tiene 87% de ser lesbiana 🌈`,
-            `${target} *guiño guiño* 🏳️‍🌈`,
-            `El gaydar dice que ${target}... nah mentira 😂`
-        ],
+        quiensoy: [`${user} eres una persona única ✨`, `${user} eres el alma de la fiesta 🥳`],
+        abrazar: [`${user} le da un abrazo a ${target} 🤗`, `*${user} abraza fuerte a ${target}* 🫂`],
+        kabrazo: [`*${user} te manda un k-abrazo coreano* 💖`, `${user} abraza a ${target} estilo k-drama 🥺`],
+        lesbiana: [`Según mis cálculos... ${target} tiene 87% de ser lesbiana 🌈`, `${target} *guiño guiño* 🏳️‍🌈`],
         pajero: [`${target} eres bien pajero/a 😏`, `Confirmado: ${target} vive en el 5vs5 🫠`],
         pajera: [`${target} eres bien pajera 😏`, `Te descubrí ${target} 👀`],
         puto: [`${target} PUTO 😡`, `Cálmate ${target} jajaja`],
@@ -58,37 +46,31 @@ let handler = async (m, { conn, command, text }) => {
     }
 
     let res = respuestas[command][Math.floor(Math.random() * respuestas[command].length)]
-    await conn.reply(m.chat, res, m, { mentions: who? [who, m.sender] : [m.sender] })
+    await conn.reply(m.chat, res, m, { mentions: [who, m.sender] })
     await conn.sendMessage(m.chat, { react: { text: '✨', key: m.key } })
 }
 
 handler.help = [
-'quiensoy',
-'abrazar ( @mencionar o responder )',
-'kabrazo ( @mencionar o responder )',
-'lesbiana ( @mencionar o responder )',
-'pajero ( @mencionar o responder )',
-'pajera ( @mencionar o responder )',
-'puto ( @mencionar o responder )',
-'puta ( @mencionar o responder )',
-'manco ( @mencionar o responder )',
-'manca ( @mencionar o responder )',
-'rata ( @mencionar o responder )',
-'prostituto ( @mencionar o responder )',
-'prostituta ( @mencionar o responder )',
-'sinpoto ( @mencionar o responder )',
-'sintetas ( @mencionar o responder )',
-'chipi',
-'chiste',
-'facto',
-'genio',
-'kiss ( @mencionar o responder )',
-'love ( @mencionar o responder )',
-'personalidad ( @mencionar o responder )',
-'pregunta',
-'sorteo ( @mencionar o responder )',
-'top ( @mencionar o responder )',
-'verdad'
+'abrazar ( @mencionar / responder / numero )',
+'kabrazo ( @mencionar / responder / numero )',
+'lesbiana ( @mencionar / responder / numero )',
+'pajero ( @mencionar / responder / numero )',
+'pajera ( @mencionar / responder / numero )',
+'puto ( @mencionar / responder / numero )',
+'puta ( @mencionar / responder / numero )',
+'manco ( @mencionar / responder / numero )',
+'manca ( @mencionar / responder / numero )',
+'rata ( @mencionar / responder / numero )',
+'prostituto ( @mencionar / responder / numero )',
+'prostituta ( @mencionar / responder / numero )',
+'sinpoto ( @mencionar / responder / numero )',
+'sintetas ( @mencionar / responder / numero )',
+'kiss ( @mencionar / responder / numero )',
+'love ( @mencionar / responder / numero )',
+'personalidad ( @mencionar / responder / numero )',
+'sorteo ( @mencionar / responder / numero )',
+'top ( @mencionar / responder / numero )',
+'quiensoy', 'chipi', 'chiste', 'facto', 'genio', 'pregunta', 'verdad'
 ]
 handler.tags = ['diversión']
 handler.command = ['quiensoy','abrazar','kabrazo','lesbiana','pajero','pajera','puto','puta','manco','manca','rata','prostituto','prostituta','sinpoto','sintetas','chipi','chiste','facto','genio','kiss','love','personalidad','pregunta','sorteo','top','verdad']
