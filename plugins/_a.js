@@ -1,16 +1,19 @@
 let handler = async (m, { conn, command, text }) => {
 
-    // DETECTAR USUARIO DE 3 FORMAS
-    let who = m.mentionedJid && m.mentionedJid[0] // 1. Mención @
-            || m.quoted? m.quoted.sender // 2. Respondiendo
-            || text.replace(/[^0-9]/g, '') + '@s.whatsapp.net' // 3. Número
+    // FORMA 1: MENCION TOCANDO EL NOMBRE
+    // FORMA 2: RESPONDIENDO
+    // FORMA 3: PONIENDO NUMERO
+    let who = m.mentionedJid[0]
+            || m.quoted?.sender
+            || (conn.parseMention(text)[0]) // Esto agarra @ aunque lo escribas
+            || (text.replace(/[^0-9]/g, '') + '@s.whatsapp.net')
 
-    if (who === '@s.whatsapp.net') who = null // Si no puso número válido
+    if (who === '@s.whatsapp.net' ||!who) who = null
 
     let necesitaPersona = ['abrazar','kabrazo','lesbiana','pajero','pajera','puto','puta','manco','manca','rata','prostituto','prostituta','sinpoto','sintetas','kiss','love','personalidad','sorteo','top'].includes(command)
 
     if (necesitaPersona &&!who) {
-        return m.reply(`❌ Usa una de estas 3 formas:\n1..abrazar @mencionar\n2. Responder +.abrazar\n3..abrazar 519123456`)
+        return m.reply(`❌ Tienes que:\n1. *Tocar el @* y elegir a la persona\n2. *Responder* al mensaje +.comando\n3..comando 519123456`)
     }
 
     let user = `@${m.sender.split('@')[0]}`
@@ -51,25 +54,25 @@ let handler = async (m, { conn, command, text }) => {
 }
 
 handler.help = [
-'abrazar ( @mencionar / responder / numero )',
-'kabrazo ( @mencionar / responder / numero )',
-'lesbiana ( @mencionar / responder / numero )',
-'pajero ( @mencionar / responder / numero )',
-'pajera ( @mencionar / responder / numero )',
-'puto ( @mencionar / responder / numero )',
-'puta ( @mencionar / responder / numero )',
-'manco ( @mencionar / responder / numero )',
-'manca ( @mencionar / responder / numero )',
-'rata ( @mencionar / responder / numero )',
-'prostituto ( @mencionar / responder / numero )',
-'prostituta ( @mencionar / responder / numero )',
-'sinpoto ( @mencionar / responder / numero )',
-'sintetas ( @mencionar / responder / numero )',
-'kiss ( @mencionar / responder / numero )',
-'love ( @mencionar / responder / numero )',
-'personalidad ( @mencionar / responder / numero )',
-'sorteo ( @mencionar / responder / numero )',
-'top ( @mencionar / responder / numero )',
+'abrazar ( @tocar / responder / numero )',
+'kabrazo ( @tocar / responder / numero )',
+'lesbiana ( @tocar / responder / numero )',
+'pajero ( @tocar / responder / numero )',
+'pajera ( @tocar / responder / numero )',
+'puto ( @tocar / responder / numero )',
+'puta ( @tocar / responder / numero )',
+'manco ( @tocar / responder / numero )',
+'manca ( @tocar / responder / numero )',
+'rata ( @tocar / responder / numero )',
+'prostituto ( @tocar / responder / numero )',
+'prostituta ( @tocar / responder / numero )',
+'sinpoto ( @tocar / responder / numero )',
+'sintetas ( @tocar / responder / numero )',
+'kiss ( @tocar / responder / numero )',
+'love ( @tocar / responder / numero )',
+'personalidad ( @tocar / responder / numero )',
+'sorteo ( @tocar / responder / numero )',
+'top ( @tocar / responder / numero )',
 'quiensoy', 'chipi', 'chiste', 'facto', 'genio', 'pregunta', 'verdad'
 ]
 handler.tags = ['diversión']
