@@ -3,25 +3,12 @@ import os from 'os'
 moment.locale('es') // fecha en español
 
 const CATEGORY_META = {
-config: 'CONFIG',
-main: 'MAIN',
-tools: 'TOOLS',
-owner: 'OWNER',
-sorteos: 'SORTEOS',
-fun: 'FUN',
-joda: 'JODA',
-ff: 'FF',
-buscadores: 'SEARCH',
-descargas: 'DOWNLOADER',
-grupo: 'GRUPOS',
-group: 'GRUPO',
-gacha: 'GROUP',
-ia: 'IA',
-info: 'INFO',
-sticker: 'STICKER',
+config: 'CONFIG', main: 'MAIN', tools: 'TOOLS', owner: 'OWNER',
+sorteos: 'SORTEOS', fun: 'FUN', joda: 'JODA', ff: 'FF',
+buscadores: 'SEARCH', descargas: 'DOWNLOADER', grupo: 'GRUPOS',
+group: 'GRUPO', gacha: 'GROUP', ia: 'IA', info: 'INFO', sticker: 'STICKER',
 }
 
-// Iconos aesthetic por categoria. Si no existe usa uno random
 const ICONOS_CATEGORIA = {
 config: '⚙️', owner: '☕', fun: '🎋', ff: '🍃', buscadores: '🔎',
 descargas: '🌷', grupo: '🍒', grupos: '🍒', gacha: '👥', ia: '💭',
@@ -30,7 +17,7 @@ info: '☁️', sticker: '🎐', main: '🌸', tools: '🧩', sorteos: '🎁', j
 
 let handler = async (m, { conn }) => {
 try {
-await conn.sendMessage(m.chat, { react: { text: '⚡', key: m.key } })
+await conn.sendMessage(m.chat, { react: { text: '🐉', key: m.key } })
 
 const fecha = moment.tz('America/Lima').format('dddd')
 const fecha2 = moment.tz('America/Lima').format('DD [de] MMMM [de] YYYY')
@@ -60,31 +47,31 @@ for (const plugin of Object.values(global.plugins || {})) {
 const userName = m.pushName || 'Usuario'
 const IMG_MENU = 'https://files.evogb.win/INtgbw.jpg'
 
-let menuTexto = `ᯇ 𝗕𝗜𝗘𝗡𝗩𝗘𝗡𝗜𝗗𝗢 : ୧
+// INICIO NUEVO
+let menuTexto = `🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
 
- ⤷ ┇ version ﹒ 3.0 DBZ ：✿ 。
-꒰ ◞⁺⊹ ．online public •
+⤷ ┇ 𝐕𝐄𝐑𝐒𝐈𝐎𝐍 ﹒ 3.0 DBZ ：✿ 。
+꒰ ◞⁺⊹ ．estado: *EN LINEA* • ${horas}h ${minutos}m
 
- ꒱ ׁ. ᘏ 𝘂𝘀𝘂𝗮𝗿𝗶𝗼 ׅ 𝆬 ָ֢ ෆ
+  ꒱ ׁ. ᘏ 𝗨𝗦𝗨𝗔𝗥𝗜𝗢 𝗔𝗖𝗧𝗜𝗩𝗢 ׅ 𝆬 ָ֢ ෆ
 🦦 ࣪ ꕀ @${userName}. ˚. ᵎᵎ
-> Este es el menu de *SON GOKU PREM* (𝐏𝐫𝐞𝐦-𝐁𝐨𝐭)
+> *Bienvenido al sistema Saiyan*
 
-──愛 *SYSTEM* ╏ 💀
-*ONLINE*: ${horas}h ${minutos}m ${segundos}s
+──愛 *INFORMACION DEL BOT* ╏ 💥
+*Usuarios*: ${totalUsers} | *Comandos*: ${pluginsCount}
+*Creador*: Whois Yalli co
 
- ׅ 埃斯 : 𝖨𝗇𝖿𝗈 ﹙ 🌑 ﹚
-> ﹒ @owner ─ creador
-      ᶻz　*${totalUsers}* users　⋌
+ ׅ 埃斯 : 𝖲𝖨𝖲𝖳𝖤𝖬𝖠 ﹙ 🌑 ﹚
+> ﹒ RAM: ${ram}mb / ${totalram}gb
+      ᶻz　*${fecha}* ─ ${fecha2} ─ ${hora}　⋌
 
-© ❛ *system*. android
-名 ─ *ram:* ${ram}mb / ${totalram}gb﹔
-𖡎 ָ֢ ‍ँ 𝆬 ׅ ׁ ꕀ ׁ ׅ.
+© ❛ *ping*. ${Math.round(performance.now())}ms
+名 ─ *modo:* public﹔
 
-> ❍ 𝖣𝗂𝗌𝖿𝗋𝗎𝗍𝖺 𝖽𝖾 𝗅𝗈𝗌 𝖼𝗈𝗆𝖺𝗇𝖽𝗈𝗌 𝗊𝗎𝖾 𝖾𝗅 𝖻𝗈𝗍 𝗈𝖿𝗋𝖾𝖼𝖾 𝗉𝖺𝗋𝖺 𝗍𝗂
+> ❍ 𝖴𝗌𝖺. 𝖺𝗇𝗍𝖾𝗌 𝖽𝖾 𝖼𝖺𝖽𝖺 𝖼𝗈𝗆𝖺𝗇𝖽𝗈 𝗉𝖺𝗋𝖺 𝖺𝖼𝗍𝗂𝗏𝖺𝗋𝗅𝗈
 
 `
 
-// Ordena: primero las que están en CATEGORY_META, luego las nuevas
 const tagsOrdenados = Object.keys(byTag).sort((a, b) => {
   const aIn = CATEGORY_META[a]? 0 : 1
   const bIn = CATEGORY_META[b]? 0 : 1
@@ -106,14 +93,15 @@ for (const tag of tagsOrdenados) {
   menuTexto += ` ㅤ└──.✦ ── ⊰ ̟!!.✦. ˙\n\n`
 }
 
-menuTexto += `*━━━━━━━━━━━━━━*
-*BOT*: SON GOKU PREM
-*CREADOR*: Whois Yallico
-*VERSION*: 3.0 DBZ
-*FECHA*: ${fecha}, ${fecha2} | ${hora}
+// FINAL NUEVO
+menuTexto += `━━━━━━━━━━━
+🐉 *SON GOKU PREM BOT* 🐉
+*Version*: 3.0 DBZ Masculino
+*Power*: Nivel Dios
+*Web*: github.com
 
-> "Conectado al sistema. Domina o muere"
-*━━━━━━━━━━━━━━*`
+> "No subestimes mi poder... o serás polvo" ⚡
+━━━━━━━━━━━`
 
 await conn.sendMessage(m.chat, {
   image: { url: IMG_MENU },
@@ -122,7 +110,7 @@ await conn.sendMessage(m.chat, {
 }, { quoted: m })
 
 } catch (e) {
-await conn.sendMessage(m.chat, { text: `*❌ SYSTEM ERROR*: ${e.message}` }, { quoted: m })
+await conn.sendMessage(m.chat, { text: `*❌ ERROR DE SISTEMA*: ${e.message}` }, { quoted: m })
 }
 }
 
