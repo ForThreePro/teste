@@ -4,7 +4,7 @@ let handler = async (m, { conn, command, usedPrefix, text, isAdmin, isBotAdmin }
 
 .⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.⚠️꒷
 
- ⤷ ┇ 𝗘𝗥𝗢𝗥 ：✿ 。
+ ⤷ ┇ 𝗘𝗥𝗥𝗢𝗥 ：✿ 。
 
 ──愛 *ACCESO DENEGADO* ╏ ❄️
 ⚠️ ➛ Este comando solo funciona en grupos
@@ -17,7 +17,7 @@ let handler = async (m, { conn, command, usedPrefix, text, isAdmin, isBotAdmin }
 
 .⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.⚠️꒷
 
- ⤷ ┇ 𝗘𝗥𝗢𝗥 ：✿ 。
+ ⤷ ┇ 𝗘𝗥𝗥𝗢𝗥 ：✿ 。
 
 ──愛 *PERMISOS INSUFICIENTES* ╏ ❄️
 ⚠️ ➛ Solo admins pueden usar este comando
@@ -32,7 +32,7 @@ let handler = async (m, { conn, command, usedPrefix, text, isAdmin, isBotAdmin }
 
 .⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.⚠️꒷
 
- ⤷ ┇ 𝗘𝗥𝗢𝗥 ：✿ 。
+ ⤷ ┇ 𝗘𝗥𝗥𝗢𝗥 ：✿ 。
 
 ──愛 *PERMISOS INSUFICIENTES* ╏ ❄️
 ⚠️ ➛ Necesito ser admin para cambiar la descripción
@@ -80,7 +80,7 @@ let handler = async (m, { conn, command, usedPrefix, text, isAdmin, isBotAdmin }
 
 .⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.⚠️꒷
 
- ⤷ ┇ 𝗘𝗥𝗢𝗥 ：✿ 。
+ ⤷ ┇ 𝗘𝗥𝗥𝗢𝗥 ：✿ 。
 
 ──愛 *PERMISOS INSUFICIENTES* ╏ ❄️
 ⚠️ ➛ Necesito ser admin para cambiar el nombre
@@ -107,7 +107,7 @@ let handler = async (m, { conn, command, usedPrefix, text, isAdmin, isBotAdmin }
 
 .⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.⚠️꒷
 
- ⤷ ┇ 𝗘𝗥𝗢𝗥 ：✿ 。
+ ⤷ ┇ 𝗘𝗥𝗥𝗢𝗥 ：✿ 。
 
 ──愛 *LIMITE EXCEDIDO* ╏ ❄️
 ⚠️ ➛ El nombre no puede pasar de 25 caracteres
