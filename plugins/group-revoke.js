@@ -8,46 +8,64 @@ let handler = async (m, { conn }) => {
     const enlaceCompleto = 'https://chat.whatsapp.com/' + nuevoEnlace
 
     await conn.reply(m.sender, 
-`*🌟 PROTOCOLO EJECUTADO 🌟*
-*━━━━━━━━━━━━━━━*
+`🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
 
-╭─「 🛡️ REPORTE DE SEGURIDAD 」─╮
-│ *🔻 ENLACE ANTERIOR*: Revocado
-│ *🔗 NUEVO ENLACE*: ${enlaceCompleto}
-│ *⚡ ESTADO*: Sistema Seguro
-│ *🐉 KI*: Barrera Restaurada
-╰─────────────────────────────╯
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.🛡️꒷
 
-> "El acceso anterior ha sido destruido"` , 
+ ⤷ ┇ 𝗣𝗥𝗢𝗧𝗢𝗖𝗢𝗟𝗢 𝗘𝗝𝗘𝗖𝗨𝗧𝗔𝗗𝗢 ：✿ 。
+꒰ ◞⁺⊹ ．Barrera restaurada •
+
+  ꒱ ׁ. ᘏ 𝗥𝗘𝗣𝗢𝗥𝗧𝗘 𝗗𝗘 𝗦𝗘𝗚𝗨𝗥𝗜𝗗𝗔𝗗 ׅ 𝆬 ָ֢ ෆ
+🛡️ ➛ Enlace Anterior: *REVOCADO* 🔻
+🛡️ ➛ Nuevo Enlace: ${enlaceCompleto}
+🛡️ ➛ Estado: *Sistema Seguro* ✅
+🛡️ ➛ Ki: *Barrera Restaurada*
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369
+> *"El acceso anterior ha sido destruido"* 💥
+━━━━━━━━━━━`, 
       m, { detectLink: true })
 
-    await conn.reply(m.chat, `*🔒 ENLACE RESTABLECIDO 🔒*
-*━━━━━━━━━━━━━━━*
+    await conn.reply(m.chat, `🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
 
-╭─「 ⚠️ ADVERTENCIA 」─╮
-│ *El enlace anterior ya no funciona*
-│ *Solo el nuevo enlace tiene poder*
-│ *Los intrusos fueron bloqueados*
-╰───────────────────╯`, m)
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.🛡️꒷
+
+ ⤷ ┇ 𝗘𝗡𝗟𝗔𝗖𝗘 𝗥𝗘𝗦𝗧𝗔𝗕𝗟𝗘𝗖𝗜𝗗𝗢 ：✿ 。
+
+──愛 *𝗔𝗗𝗩𝗘𝗥𝗧𝗘𝗡𝗖𝗜𝗔* ╏ ⚠️
+🛡️ ➛ El enlace anterior ya no funciona
+🛡️ ➛ Solo el nuevo enlace tiene poder
+🛡️ ➛ Los intrusos fueron bloqueados
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369
+> *"Nueva barrera ki activada"* ⚡
+━━━━━━━━━━━`, m)
 
   } catch (error) {
     console.error(error)
-    await m.reply(`*❌ ERROR CRITICO ❌*
-*━━━━━━━━━━━━━━━*
+    await m.reply(`🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
 
-╭─「 💥 DETALLE 」─╮
-│ ${error.message}
-╰─────────────╯
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.⚠️꒷
 
-╭─「 🐉 SOLUCION 」─╮
-│ *Verifica que el bot sea admin*
-│ *Necesita permisos para romper barreras*
-╰─────────────────╯`)
+ ⤷ ┇ 𝗘𝗥𝗥𝗢𝗥 𝗖𝗥𝗜𝗧𝗜𝗖𝗢 ：✿ 。
+
+──愛 *𝗗𝗘𝗧𝗔𝗟𝗟𝗘* ╏ ❄️
+⚠️ ➛ ${error.message}
+
+──愛 *𝗦𝗢𝗟𝗨𝗖𝗜𝗢𝗡* ╏ 💥
+⚠️ ➛ Verifica que el bot sea admin
+⚠️ ➛ Necesita permisos para romper barreras
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369
+━━━━━━━━━━━`)
   }
 }
 
 handler.help = ['revoke']
-handler.tags = ['grupo']
+handler.tags = ['group']
 handler.command = ['revoke', 'restablecer']
 handler.group = true
 handler.admin = true
