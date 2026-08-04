@@ -31,22 +31,64 @@ export async function before(m, { conn, participants, groupMetadata }) {
 
     const format = (text) => {
         return text
-       .replace(/@user/g, `@${target.split('@')[0]}`)
-       .replace(/@name/g, targetName)
-       .replace(/@group/g, groupMetadata.subject)
-       .replace(/@desc/g, groupMetadata.desc?.toString() || '*Sin descripcion*')
-       .replace(/%users/g, memberCount)
-       .replace(/@action/g, actionText[m.messageStubType] || '')
-       .replace(/@date/g, new Date().toLocaleString('es-PE'));
+      .replace(/@user/g, `@${target.split('@')[0]}`)
+      .replace(/@name/g, targetName)
+      .replace(/@group/g, groupMetadata.subject)
+      .replace(/@desc/g, groupMetadata.desc?.toString() || '*Sin descripcion*')
+      .replace(/%users/g, memberCount)
+      .replace(/@action/g, actionText[m.messageStubType] || '')
+      .replace(/@date/g, new Date().toLocaleString('es-PE', { timeZone: 'America/Lima' }));
     };
 
     let ppUrl;
     try { ppUrl = await conn.profilePictureUrl(target, 'image'); }
     catch { ppUrl = 'https://files.evogb.win/INtgbw.jpg' }
 
-    const defaultWelcome = `*${e1} NUEVO GUERRERO DETECTADO ${e1}*\n*━━━━━━━━*\n\n*ID*: @name\n*GRUPO*: @group\n*ESTADO*: @action\n╭─「 ${e2} INFO DEL SISTEMA 」─╮\n│ *📜 Desc*: @desc\n│ *👥 Miembros*: %users\n│ *⚠️ Aviso*: Lee las reglas o ban\n╰───────────────────────╯\n\n> "Bienvenido a la red. No la cagues" ${e1}`;
+    const defaultWelcome = `🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
 
-    const defaultBye = `*${e1} GUERRERO DADO DE BAJA ${e1}*\n*━━━━━━━━*\n\n*ID*: @name\n*GRUPO*: @group\n\n*ESTADO*: @action\n\n╭─「 ${e2} REPORTE 」─╮\n│ *👥 Miembros Actuales*: %users\n│ *🕐 Salida*: @date\n╰────────────────╯\n\n> "Un soldado menos. El sistema sigue" ${e1}`;
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.🍒꒷
+
+ ⤷ ┇ 𝗡𝗨𝗘𝗩𝗢 𝗚𝗨𝗘𝗥𝗘𝗥𝗢 ${e1} ：✿ 。
+꒰ ◞⁺⊹ ．Registro de ingreso •
+
+  ꒱ ׁ. ᘏ 𝗗𝗔𝗧𝗢𝗦 ׅ 𝆬 ָ֢ ෆ
+🍒 ➛ Nombre: @name
+🍒 ➛ Grupo: @group
+🍒 ➛ Estado: @action
+🍒 ➛ Miembros: %users
+
+──愛 *INFORMACION* ╏ 📝
+🍒 ➛ Desc: @desc
+🍒 ➛ Fecha: @date
+
+──愛 *AVISO* ╏ ⚠️
+🍒 ➛ Lee las reglas o recibiras un Genki Dama
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369
+> *"Bienvenido a la red. No la cagues"* ${e1}
+━━━━━━━━━━━`;
+
+    const defaultBye = `🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
+
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.🍒꒷
+
+ ⤷ ┇ 𝗚𝗨𝗘𝗥𝗘𝗥𝗢 𝗗𝗔𝗗𝗢 𝗗𝗘 𝗕𝗔𝗝𝗔 ${e1} ：✿ 。
+꒰ ◞⁺⊹ ．Registro de salida •
+
+  ꒱ ׁ. ᘏ 𝗗𝗔𝗧𝗢𝗦 ׅ 𝆬 ָ֢ ෆ
+🍒 ➛ Nombre: @name
+🍒 ➛ Grupo: @group
+🍒 ➛ Estado: @action
+🍒 ➛ Miembros: %users
+
+──愛 *REPORTE* ╏ 📝
+🍒 ➛ Fecha: @date
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369
+> *"Un soldado menos. El sistema sigue"* ${e1}
+━━━━━━━━━━━`;
 
     const welcome = format(chat.welcomeText || defaultWelcome);
     const bye = format(chat.byeText || defaultBye);
