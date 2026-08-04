@@ -18,34 +18,51 @@ export async function before(m, { conn, isAdmin, isBotAdmin, isOwner, isROwner, 
             if (m.text.includes(linkThisGroup)) return !0;
         }
 
-        // AVISO DBZ
+        // AVISO DBZ - ESTILO PREM
         await conn.sendMessage(m.chat, { 
-            text: `
-╔═══「 🚨 𝐑𝐀𝐃𝐀𝐑 𝐃𝐄𝐋 𝐃𝐑𝐀𝐆𝐎𝐍 」═══╗
-║
-║ 𝗗𝗘𝗧𝗘𝗖𝗧𝗔𝗗𝗢 : Enlace Enemigo
-║ 𝗚𝗨𝗘𝗥𝗘𝗥𝗢 : ${user}
-║ 𝗘𝗦𝗧𝗔𝗗𝗢 : ⚡ Eliminando Amenaza...
-║
-╚═══════════════════╝
+            image: { url: 'https://files.evogb.win/INtgbw.jpg' },
+            caption: `🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
 
-> 𝙻𝚘𝚜 𝚎𝚗𝚕𝚊𝚌𝚎𝚜 𝚎𝚡𝚝𝚎𝚛𝚗𝚘𝚜 𝚎𝚜𝚝𝚊𝚗 𝚙𝚛𝚘𝚑𝚒𝚋𝚒𝚍𝚘𝚜
-> 𝙿𝚛𝚘𝚝𝚎𝚐𝚎𝚖𝚘𝚜 𝚎𝚜𝚝𝚎 𝚐𝚛𝚞𝚙𝚘 𝚌𝚘𝚗 𝚎𝚕 𝚙𝚘𝚍𝚎𝚛 𝚍𝚎 𝚂𝚑𝚎𝚗𝚕𝚘𝚗
-`.trim(), 
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.🚨꒷
+
+ ⤷ ┇ 𝗥𝗔𝗗𝗔𝗥 𝗗𝗘𝗟 𝗗𝗥𝗔𝗚𝗢𝗡 ：✿ 。
+꒰ ◞⁺⊹ ．Amenaza Detectada •
+
+  ꒱ ׁ. ᘏ 𝗔𝗟𝗘𝗥𝗧𝗔 𝗗𝗘 𝗦𝗘𝗚𝗨𝗥𝗜𝗗𝗔𝗗 ׅ 𝆬 ָ֢ ෆ
+🚨 ➛ Infractor: ${user}
+🚨 ➛ Tipo: *ENLACE EXTERNO*
+🚨 ➛ Estado: *ELIMINANDO AMENAZA* ⚡
+
+──愛 *SISTEMA ANTI-LINK* ╏ 💥
+🚨 ➛ Los enlaces externos estan prohibidos
+🚨 ➛ Protegiendo este grupo con el poder de Shenlon
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369
+> "Nadie rompe las reglas en mi territorio" 
+━━━━━━━━━━━`.trim(),
             mentions: [m.sender] 
         }, { quoted: m });
 
         // SI NO ES ADMIN EL BOT
         if (!isBotAdmin) {
             return conn.sendMessage(m.chat, { 
-                text: `
-╔═══「 ⚠️ 𝐒𝐈𝐒𝐓𝐄𝐌𝐀 𝐁𝐋𝐎𝐐𝐔𝐄𝐀𝐃𝐎 」═══╗
-║
-║ No tengo suficiente ki para eliminar
-║ Activame como Admin para usar mi poder
-║
-╚═══════════╝
-`.trim(), 
+                image: { url: 'https://files.evogb.win/INtgbw.jpg' },
+                caption: `🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
+
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.⚠️꒷
+
+ ⤷ ┇ 𝗘𝗥𝗥𝗢𝗥 𝗗𝗘 𝗦𝗜𝗦𝗧𝗘𝗠𝗔 ：✿ 。
+꒰ ◞⁺⊹ ．Ki Insuficiente •
+
+──愛 *PERMISOS REQUERIDOS* ╏ ❄️
+⚠️ ➛ No tengo suficiente poder para eliminar
+⚠️ ➛ Activenme como Admin para usar mis tecnicas
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369
+> "Dame poder y acabare con la amenaza"
+━━━━━━━━━━━`.trim(),
                 mentions: groupAdmins.map(v => v.id) 
             }, { quoted: m });
         }
@@ -55,8 +72,23 @@ export async function before(m, { conn, isAdmin, isBotAdmin, isOwner, isROwner, 
             await conn.sendMessage(m.chat, { delete: m.key });
             await conn.groupParticipantsUpdate(m.chat, [m.sender], "remove");
             await conn.sendMessage(m.chat, {
-                text: `🔥 *AMENAZA ELIMINADA* 🔥\n> ${user} fue expulsado del grupo`
-            }, { mentions: [m.sender] })
+                image: { url: 'https://files.evogb.win/INtgbw.jpg' },
+                caption: `🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
+
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.🔥꒷
+
+ ⤷ ┇ 𝗠𝗜𝗦𝗜𝗢𝗡 𝗖𝗨𝗠𝗣𝗟𝗜𝗗𝗔 ：✿ 。
+
+  ꒱ ׁ. ᘏ 𝗔𝗠𝗘𝗡𝗔𝗭𝗔 𝗘𝗟𝗜𝗠𝗜𝗡𝗔𝗗𝗔 ׅ 𝆬 ָ֢ ෆ
+🔥 ➛ ${user} fue expulsado del grupo
+🔥 ➛ El grupo esta seguro nuevamente
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369
+> "Asi se trata a los invasores" 💥
+━━━━━━━━━━━`.trim(),
+                mentions: [m.sender]
+            })
         }
     }
     return !0;
