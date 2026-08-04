@@ -20,7 +20,7 @@ const handler = async (m, { isOwner, isAdmin, conn, participants, args }) => {
       { prefijo: '57', bandera: '🇨🇴' }, { prefijo: '269', bandera: '🇰🇲' }, { prefijo: '242', bandera: '🇨🇬' }, { prefijo: '506', bandera: '🇨🇷' }, { prefijo: '385', bandera: '🇭🇷' },
       { prefijo: '53', bandera: '🇨🇺' }, { prefijo: '357', bandera: '🇨🇾' }, { prefijo: '420', bandera: '🇨🇿' }, { prefijo: '45', bandera: '🇩🇰' }, { prefijo: '253', bandera: '🇩🇯' },
       { prefijo: '593', bandera: '🇪🇨' }, { prefijo: '20', bandera: '🇪🇬' }, { prefijo: '503', bandera: '🇸🇻' }, { prefijo: '240', bandera: '🇬🇶' }, { prefijo: '291', bandera: '🇪🇷' },
-      { prefijo: '372', bandera: '🇪🇪' }, { prefijo: '268', bandera: '🇸🇿' }, { prefijo: '251', bandera: '🇪🇹' }, { prefijo: '679', bandera: '🇫🇯' }, { prefijo: '358', bandera: '🇫🇮' },
+      { prefijo: '372', bandera: '🇪' }, { prefijo: '268', bandera: '🇸🇿' }, { prefijo: '251', bandera: '🇪🇹' }, { prefijo: '679', bandera: '🇫🇯' }, { prefijo: '358', bandera: '🇫🇮' },
       { prefijo: '33', bandera: '🇫🇷' }, { prefijo: '241', bandera: '🇬🇦' }, { prefijo: '220', bandera: '🇬🇲' }, { prefijo: '995', bandera: '🇬🇪' }, { prefijo: '49', bandera: '🇩🇪' },
       { prefijo: '233', bandera: '🇬🇭' }, { prefijo: '30', bandera: '🇬🇷' }, { prefijo: '502', bandera: '🇬🇹' }, { prefijo: '224', bandera: '🇬🇳' }, { prefijo: '245', bandera: '🇬🇼' },
       { prefijo: '592', bandera: '🇬🇾' }, { prefijo: '509', bandera: '🇭🇹' }, { prefijo: '504', bandera: '🇭🇳' }, { prefijo: '36', bandera: '🇭🇺' }, { prefijo: '354', bandera: '🇮🇸' },
@@ -31,7 +31,7 @@ const handler = async (m, { isOwner, isAdmin, conn, participants, args }) => {
       { prefijo: '352', bandera: '🇱🇺' }, { prefijo: '261', bandera: '🇲🇬' }, { prefijo: '265', bandera: '🇲🇼' }, { prefijo: '60', bandera: '🇲🇾' }, { prefijo: '960', bandera: '🇲🇻' },
       { prefijo: '223', bandera: '🇲🇱' }, { prefijo: '356', bandera: '🇲🇹' }, { prefijo: '222', bandera: '🇲🇷' }, { prefijo: '230', bandera: '🇲🇺' }, { prefijo: '52', bandera: '🇲🇽' },
       { prefijo: '373', bandera: '🇲🇩' }, { prefijo: '976', bandera: '🇲🇳' }, { prefijo: '382', bandera: '🇲🇪' }, { prefijo: '212', bandera: '🇲🇦' }, { prefijo: '258', bandera: '🇲🇿' },
-      { prefijo: '95', bandera: '🇲🇲' }, { prefijo: '264', bandera: '🇳🇦' }, { prefijo: '977', bandera: '🇳🇵' }, { prefijo: '31', bandera: '🇳🇱' }, { prefijo: '64', bandera: '🇳🇿' },
+      { prefijo: '95', bandera: '🇲' }, { prefijo: '264', bandera: '🇳🇦' }, { prefijo: '977', bandera: '🇳🇵' }, { prefijo: '31', bandera: '🇳🇱' }, { prefijo: '64', bandera: '🇳🇿' },
       { prefijo: '505', bandera: '🇳🇮' }, { prefijo: '227', bandera: '🇳🇪' }, { prefijo: '234', bandera: '🇳🇬' }, { prefijo: '850', bandera: '🇰🇵' }, { prefijo: '47', bandera: '🇳🇴' },
       { prefijo: '968', bandera: '🇴🇲' }, { prefijo: '92', bandera: '🇵🇰' }, { prefijo: '507', bandera: '🇵🇦' }, { prefijo: '675', bandera: '🇵🇬' }, { prefijo: '595', bandera: '🇵🇾' },
       { prefijo: '51', bandera: '🇵🇪' }, { prefijo: '63', bandera: '🇵🇭' }, { prefijo: '48', bandera: '🇵🇱' }, { prefijo: '351', bandera: '🇵🇹' }, { prefijo: '974', bandera: '🇶🇦' },
@@ -67,21 +67,23 @@ const handler = async (m, { isOwner, isAdmin, conn, participants, args }) => {
 
     const orderedFlags = countryFlags.map(c => c.bandera).concat(['🚩']);
 
-    let messageText = `*🔥 INVOCACION DEL DRAGON 🔥*
+    let messageText = `🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
 
-*╭─「 🐉 NOTIFICACION GENERAL 」─╮*
-│ *GRUPO*: ${groupName}
-*╰───────────────────────╯*
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.🌟꒷
 
-*⚡ MENSAJE KI ⚡*
-*${customMessage}*
+ ⤷ ┇ 𝗜𝗡𝗩𝗢𝗖𝗔𝗖𝗜𝗢𝗡 𝗗𝗘𝗟 𝗗𝗥𝗔𝗚𝗢𝗡 ：✿ 。
+꒰ ◞⁺⊹ ．Shunkanido activado •
 
-> *"Con el poder del Shunkanido los convoco a todos"*
+──愛 *𝗚𝗥𝗨𝗣𝗢* ╏ 📝
+🌟 ➛ ${groupName}
 
-*──🐉 INTEGRANTES ──*
-*👥 Total*: ${participants.length} guerreros
+──愛 *𝗠𝗘𝗡𝗦𝗔𝗝𝗘 𝗞𝗜* ╏ ⚡
+🌟 ➛ ${customMessage}
 
-*──🌍 LISTA POR NACION ──*
+──愛 *𝗜𝗡𝗧𝗘𝗚𝗥𝗔𝗡𝗧𝗘𝗦* ╏ 👥
+🌟 ➛ Total: ${participants.length} guerreros
+
+──愛 *𝗟𝗜𝗦𝗧𝗔 𝗣𝗢𝗥 𝗡𝗔𝗖𝗜𝗢𝗡* ╏ 🌍
 `
 
     for (const flag of orderedFlags) {
@@ -89,17 +91,15 @@ const handler = async (m, { isOwner, isAdmin, conn, participants, args }) => {
         for (const mem of grouped[flag]) {
           const realJid = mem.jid || mem.id || '';
           const displayNumber = realJid.split('@')[0];
-          messageText += `│ ${flag} @${displayNumber}\n`;
+          messageText += `🌟 ➛ ${flag} @${displayNumber}\n`;
         }
       }
     }
 
     messageText += `
-*╭─「 🌟 SON GOKU PREM 」─╮*
-│ *Creador*: Whois Yallico
-│ *Version*: 4.0 Super Saiyajin
-*╰─────────────────╯*
-
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369
+*Version*: 4.0 Super Saiyajin
 > *"El ki de todos esta conectado"* ⚡`
 
     // TU FOTO
@@ -113,13 +113,18 @@ const handler = async (m, { isOwner, isAdmin, conn, participants, args }) => {
 
   } catch (error) {
     console.error("[ERROR EN GOKU PREM]:", error);
-    conn.reply(m.chat, `*❌ ERROR CRITICO ❌*
-*━━━━━━━━━━━━━━━*
+    conn.reply(m.chat, `🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
 
-╭─「 💥 DETALLE 」─╮
-│ *Ocurrio un error al invocar*
-│ *Verifica los permisos*
-╰─────────────╯`, m);
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.⚠️꒷
+
+ ⤷ ┇ 𝗘𝗥𝗥𝗢𝗥 𝗖𝗥𝗜𝗧𝗜𝗖𝗢 ：✿ 。
+
+──愛 *𝗗𝗘𝗧𝗔𝗟𝗟𝗘* ╏ ❄️
+⚠️ ➛ Ocurrio un error al invocar
+⚠️ ➛ Verifica los permisos
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369`, m);
   }
 };
 
