@@ -3,26 +3,31 @@ import fetch from "node-fetch"
 import yts from 'yt-search'
 
 let handler = async (m, { conn, text, command, usedPrefix }) => {
-    if (!text) return conn.reply(m.chat, `*🔥 SON GOKU PREM 🔥*
+    if (!text) return conn.reply(m.chat, `🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
 
-*MODULO*: CAPSULA HORADORA
-*ESTADO*: ENERGIA MAXIMA
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.🌳꒷
 
-*YOUTUBE*
-[1].play nombre → Ki Audio
-[2].play2 nombre → Ki Video
-[3].ytmp3 link → Audio Directo
-[4].ytmp4 link → Video 720p
+ ⤷ ┇ 𝗠𝗢𝗗𝗨𝗟𝗢 𝗗𝗘 𝗗𝗘𝗦𝗖𝗔𝗥𝗚𝗔𝗦 ：✿ 。
+꒰ ◞⁺⊹ ．CAPSULA HORADORA • ENERGIA MAXIMA
 
-*SOCIAL*
-[5].spotify nombre → Musica
-[6].tiktok link → Video
-[7].tiktoksearch txt → Buscar
-[8].ig link → Instagram
-[9].fb link → Facebook
-[10].mediafire link → Archivo
+  ꒱ ׁ. ᘏ 𝗬𝗢𝗨𝗧𝗨𝗕𝗘 ׅ 𝆬 ָ֢ ෆ
+🌳 ➛.play nombre → Ki Audio MP3
+🌳 ➛.play2 nombre → Ki Video MP4
+🌳 ➛.ytmp3 link → Audio Directo
+🌳 ➛.ytmp4 link → Video 720p
 
-*POWERED BY KAME HOUSE*`, m)
+  ꒱ ׁ. ᘏ 𝗦𝗢𝗖𝗜𝗔𝗟 ׅ 𝆬 ָ֢ ෆ
+🌳 ➛.spotify nombre → Musica
+🌳 ➛.tiktok link → Video
+🌳 ➛.tiktoksearch txt → Buscar
+🌳 ➛.ig link → Instagram
+🌳 ➛.fb link → Facebook
+🌳 ➛.mediafire link → Archivo
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369
+> *POWERED BY KAME HOUSE* 🏠
+━━━━━━━━━━━`, m)
 
     await m.react('⏳')
     const keyEvo = Buffer.from('ZWt1c2Fz', 'base64').toString('utf-8').split('').reverse().join('')
@@ -40,21 +45,30 @@ let handler = async (m, { conn, text, command, usedPrefix }) => {
 
             let isVideo = command === 'play2'
             let apiUrl = isVideo
-          ? `https://api.evogb.org/dl/ytmp4?url=${encodeURIComponent(vid.url)}&quality=720&key=${keySasuke}`
+         ? `https://api.evogb.org/dl/ytmp4?url=${encodeURIComponent(vid.url)}&quality=720&key=${keySasuke}`
                 : `https://api.evogb.org/dl/ytmp3?url=${encodeURIComponent(vid.url)}&key=${keySasuke}`
 
             let json = await (await fetch(apiUrl)).json()
             if (!json.status) throw 'YT_DL_ERROR'
 
-            let cap = `*🔥 YOUTUBE ${isVideo? 'VIDEO' : 'AUDIO'} 🔥*
+            let cap = `🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
 
-*Titulo*: ${vid.title}
-*Duracion*: ${vid.timestamp}
-*Autor*: ${vid.author.name}
-*Vistas*: ${vid.views.toLocaleString()}
-*Formato*: ${isVideo? 'MP4 720p' : 'MP3 320kbps'}
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.🌳꒷
 
-*Extrayendo energia...*`
+ ⤷ ┇ 𝗬𝗢𝗨𝗧𝗨𝗕𝗘 ${isVideo? 'VIDEO' : 'AUDIO'} ：✿ 。
+꒰ ◞⁺⊹ ．Extrayendo energia •
+
+  ꒱ ׁ. ᘏ 𝗗𝗘𝗧𝗔𝗟𝗟𝗘𝗦 ׅ 𝆬 ָ֢ ෆ
+🌳 ➛ Titulo: ${vid.title}
+🌳 ➛ Duracion: ${vid.timestamp}
+🌳 ➛ Autor: ${vid.author.name}
+🌳 ➛ Vistas: ${vid.views.toLocaleString()}
+🌳 ➛ Formato: ${isVideo? 'MP4 720p' : 'MP3 320kbps'}
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369
+> *Enviando con el poder de Shenlon* 💥
+━━━━━━━━━━━`
 
             await conn.sendMessage(m.chat, { image: { url: 'https://files.evogb.win/INtgbw.jpg' }, caption: cap }, { quoted: m })
             await conn.sendMessage(m.chat, {
@@ -75,20 +89,28 @@ let handler = async (m, { conn, text, command, usedPrefix }) => {
 
             let isVideo = command === 'ytmp4'
             let apiUrl = isVideo
-           ? `https://api.evogb.org/dl/ytmp4?url=${encodeURIComponent(vid.url)}&quality=720&key=${keySasuke}`
+          ? `https://api.evogb.org/dl/ytmp4?url=${encodeURIComponent(vid.url)}&quality=720&key=${keySasuke}`
                 : `https://api.evogb.org/dl/ytmp3?url=${encodeURIComponent(vid.url)}&key=${keySasuke}`
 
             let json = await (await fetch(apiUrl)).json()
             if (!json.status) throw 'YT_DL_ERROR'
 
-            let cap = `*🔥 YT ${isVideo? 'VIDEO' : 'AUDIO'} DIRECTO 🔥*
+            let cap = `🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
 
-*Titulo*: ${vid.title}
-*Formato*: ${isVideo? 'MP4 720p' : 'MP3'}
-*Duracion*: ${vid.timestamp}
-*Vistas*: ${vid.views.toLocaleString()}
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.🌳꒷
 
-*Descarga iniciada*`
+ ⤷ ┇ 𝗬𝗧 ${isVideo? 'VIDEO' : 'AUDIO'} 𝗗𝗜𝗥𝗘𝗖𝗧𝗢 ：✿ 。
+
+  ꒱ ׁ. ᘏ 𝗗𝗘𝗧𝗔𝗟𝗘𝗦 ׅ 𝆬 ָ֢ ෆ
+🌳 ➛ Titulo: ${vid.title}
+🌳 ➛ Formato: ${isVideo? 'MP4 720p' : 'MP3'}
+🌳 ➛ Duracion: ${vid.timestamp}
+🌳 ➛ Vistas: ${vid.views.toLocaleString()}
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369
+> *Descarga iniciada* ⚡
+━━━━━━━━━━━`
 
             await conn.sendMessage(m.chat, { image: { url: 'https://files.evogb.win/INtgbw.jpg' }, caption: cap }, { quoted: m })
             await conn.sendMessage(m.chat, {
@@ -113,15 +135,23 @@ let handler = async (m, { conn, text, command, usedPrefix }) => {
             let dlData = await dlRes.json()
             if (!dlData.status) throw 'SP_DL_ERROR'
 
-            let cap = `*🎵 SPOTIFY 🎵*
+            let cap = `🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
 
-*Titulo*: ${dlData.data.name}
-*Artista*: ${dlData.data.artist}
-*Album*: ${dlData.data.album}
-*Duracion*: ${dlData.data.duration}
-*Año*: ${dlData.data.year}
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.💭꒷
 
-*Musica procesada*`
+ ⤷ ┇ 𝗦𝗣𝗢𝗧𝗜𝗙𝗬 ：✿ 。
+
+  ꒱ ׁ. ᘏ 𝗗𝗘𝗧𝗔𝗟𝗟𝗘𝗦 ׅ 𝆬 ָ֢ ෆ
+💭 ➛ Titulo: ${dlData.data.name}
+💭 ➛ Artista: ${dlData.data.artist}
+💭 ➛ Album: ${dlData.data.album}
+💭 ➛ Duracion: ${dlData.data.duration}
+💭 ➛ Año: ${dlData.data.year}
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369
+> *Musica procesada* 🎵
+━━━━━━━━━━━`
 
             await conn.sendMessage(m.chat, { image: { url: 'https://files.evogb.win/INtgbw.jpg' }, caption: cap }, { quoted: m })
             await conn.sendMessage(m.chat, { audio: { url: dlData.data.url }, mimetype: 'audio/mpeg', fileName: `${dlData.data.name}.mp3` }, { quoted: m })
@@ -135,26 +165,42 @@ let handler = async (m, { conn, text, command, usedPrefix }) => {
                 let video = res.data[0]
                 if (!video) throw 'TT_NOT_FOUND'
 
-                let caption = `*🔥 TIKTOK SEARCH 🔥*
+                let caption = `🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
 
-*Titulo*: ${video.title}
-*Autor*: ${video.author.nickname}
-*Vistas*: ${video.play_count.toLocaleString()}
-*Likes*: ${video.digg_count.toLocaleString()}
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.🌳꒷
 
-*Video encontrado*`
+ ⤷ ┇ 𝗧𝗜𝗞𝗧𝗢𝗞 𝗦𝗘𝗔𝗥𝗖𝗛 ：✿ 。
+
+  ꒱ ׁ. ᘏ 𝗗𝗘𝗧𝗔𝗟𝗟𝗘𝗦 ׅ 𝆬 ָ֢ ෆ
+🌳 ➛ Titulo: ${video.title}
+🌳 ➛ Autor: ${video.author.nickname}
+🌳 ➛ Vistas: ${video.play_count.toLocaleString()}
+🌳 ➛ Likes: ${video.digg_count.toLocaleString()}
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369
+> *Video encontrado* 📱
+━━━━━━━━━━━`
                 await conn.sendFile(m.chat, video.dl, 'tiktok.mp4', caption, m)
             } else {
                 let res = await (await fetch(`https://api.evogb.org/dl/tiktok?url=${text}&key=${keySasuke}`)).json()
                 let data = res.data
                 if (!data) throw 'TT_DL_ERROR'
 
-                let caption = `*🔥 TIKTOK DOWNLOAD 🔥*
+                let caption = `🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
 
-*Titulo*: ${data.title}
-*Autor*: ${data.author.nickname}
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.🌳꒷
 
-*Descarga completa*`
+ ⤷ ┇ 𝗧𝗜𝗞𝗧𝗢𝗞 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗 ：✿ 。
+
+  ꒱ ׁ. ᘏ 𝗗𝗘𝗧𝗔𝗟𝗘𝗦 ׅ 𝆬 ָ֢ ෆ
+🌳 ➛ Titulo: ${data.title}
+🌳 ➛ Autor: ${data.author.nickname}
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369
+> *Descarga completa* ✅
+━━━━━━━━━━━`
                 await conn.sendFile(m.chat, Array.isArray(data.dl)? data.dl[0] : data.dl, 'tiktok.mp4', caption, m)
             }
             return await m.react('✅')
@@ -167,12 +213,20 @@ let handler = async (m, { conn, text, command, usedPrefix }) => {
             let media = data.data[0]
             let type = media.type === 'video'? 'VIDEO' : 'IMAGEN'
 
-            let cap = `*📸 INSTAGRAM 📸*
+            let cap = `🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
 
-*Tipo*: ${type}
-*Estado*: Enviando
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.🌳꒷
 
-*Contenido capturado*`
+ ⤷ ┇ 𝗜𝗡𝗦𝗧𝗔𝗚𝗥𝗔𝗠 ：✿ 。
+
+  ꒱ ׁ. ᘏ 𝗗𝗘𝗧𝗔𝗟𝗘𝗦 ׅ 𝆬 ָ֢ ෆ
+🌳 ➛ Tipo: ${type}
+🌳 ➛ Estado: Enviando
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369
+> *Contenido capturado* 📸
+━━━━━━━━━━━`
 
             await conn.sendMessage(m.chat, {
                 [media.type === 'video'? 'video' : 'image']: { url: media.url },
@@ -188,12 +242,20 @@ let handler = async (m, { conn, text, command, usedPrefix }) => {
             if (!data.status) throw 'FB_ERROR'
             let video = data.resultados[0]
 
-            let cap = `*📘 FACEBOOK 📘*
+            let cap = `🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
 
-*Calidad*: ${video.calidad || 'HD'}
-*Estado*: Enviando
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.🌳꒷
 
-*Video extraido*`
+ ⤷ ┇ 𝗙𝗔𝗖𝗘𝗕𝗢𝗞 ：✿ 。
+
+  ꒱ ׁ. ᘏ 𝗗𝗘𝗧𝗔𝗟𝗘𝗦 ׅ 𝆬 ָ֢ ෆ
+🌳 ➛ Calidad: ${video.calidad || 'HD'}
+🌳 ➛ Estado: Enviando
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369
+> *Video extraido* 📘
+━━━━━━━━━━━`
 
             await conn.sendMessage(m.chat, {
                 video: { url: video.url },
@@ -210,13 +272,21 @@ let handler = async (m, { conn, text, command, usedPrefix }) => {
             if (!result.status ||!result.data) throw 'MF_ERROR'
 
             let { name, size, date, dl } = result.data
-            let caption = `*📦 MEDIAFIRE 📦*
+            let caption = `🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
 
-*Nombre*: ${name}
-*Tamaño*: ${size}
-*Fecha*: ${date}
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.🌳꒷
 
-*Archivo extraido*`
+ ⤷ ┇ 𝗠𝗘𝗗𝗜𝗔𝗙𝗜𝗥𝗘 ：✿ 。
+
+  ꒱ ׁ. ᘏ 𝗗𝗘𝗧𝗔𝗟𝗘𝗦 ׅ 𝆬 ָ֢ ෆ
+🌳 ➛ Nombre: ${name}
+🌳 ➛ Tamaño: ${size}
+🌳 ➛ Fecha: ${date}
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369
+> *Archivo extraido* 📦
+━━━━━━━━━━━`
 
             await conn.sendFile(m.chat, dl, name, caption, m)
             return await m.react('✅')
@@ -236,12 +306,19 @@ let handler = async (m, { conn, text, command, usedPrefix }) => {
             FB_ERROR: 'ERROR EN FACEBOOK',
             MF_ERROR: 'ARCHIVO NO ENCONTRADO'
         }
-        m.reply(`*❌ ERROR DE SISTEMA ❌*
+        m.reply(`🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
 
-*Detalle*: ${msgs[e] || 'ERROR INESPERADO'}
-*Accion*: Verificar enlace
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.⚠️꒷
 
-*SON GOKU PREM*`)
+ ⤷ ┇ 𝗘𝗥𝗢𝗥 𝗗𝗘 𝗦𝗜𝗦𝗧𝗘𝗠𝗔 ：✿ 。
+
+──愛 *FALLA DETECTADA* ╏ ❄️
+⚠️ ➛ Detalle: ${msgs[e] || 'ERROR INESPERADO'}
+⚠️ ➛ Accion: Verificar enlace
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369
+━━━━━━━━━━━`)
     }
 }
 
