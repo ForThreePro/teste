@@ -3,7 +3,7 @@ let handler = async (m, { conn, isAdmin, command }) => {
 
 .⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.⚠️꒷
 
- ⤷ ┇ 𝗘𝗥𝗢𝗥 ：✿ 。
+ ⤷ ┇ 𝗘𝗥𝗥𝗢𝗥 ：✿ 。
 
 ──愛 *ACCESO DENEGADO* ╏ ❄️
 ⚠️ ➛ Este comando solo funciona en grupos
@@ -98,7 +98,7 @@ let handler = async (m, { conn, isAdmin, command }) => {
 
 .⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.⚠️꒷
 
- ⤷ ┇ 𝗘𝗥𝗢𝗥 𝗗𝗘 𝗦𝗜𝗦𝗧𝗘𝗠𝗔 ：✿ 。
+ ⤷ ┇ 𝗘𝗥𝗥𝗢𝗥 𝗗𝗘 𝗦𝗜𝗦𝗧𝗘𝗠𝗔 ：✿ 。
 
 ──愛 *FALLA* ╏ ❄️
 ⚠️ ➛ ${e.message}
