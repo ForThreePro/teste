@@ -33,40 +33,52 @@ handler.before = async function (m, { conn }) {
     // IMAGEN DBZ FIJA
     let banner = 'https://files.evogb.win/INtgbw.jpg'
 
-    // DISEÑO DBZ PROMOTE
-    const admingp = `
-╔═══「 🔥 𝐓𝐑𝐀𝐍𝐒𝐅𝐎𝐑𝐌𝐀𝐂𝐈𝐎𝐍 」═══╗
-║
-║ 𝗚𝗨𝗘𝗥𝗥𝗘𝗥𝗢 : ${userTag}
-║ 𝗘𝗦𝗧𝗔𝗗𝗢 : ⚡ SUPER SAIYAJIN
-║ 𝗢𝗧𝗢𝗥𝗚𝗔𝗗𝗢 𝗣𝗢𝗥 : ${adminTag}
-║
-╠═══「 𝗣𝗢𝗗𝗘𝗥𝗘𝗦 𝗗𝗘𝗦𝗕𝗟𝗢𝗤𝗨𝗘𝗔𝗗𝗢𝗦 」═══╣
-║ [✓] Expulsar / Promover
-║ [✓] Editar Info Grupo
-║ [✓] Cambiar Config
-║ [✓] Modo Anuncios
-╚══════════════════════╝
+    // DISEÑO DBZ PROMOTE - ESTILO PREM
+    const admingp = `🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
 
-> 𝙲𝚘𝚗 𝚐𝚛𝚊𝚗 𝚙𝚘𝚍𝚎𝚛 𝚟𝚒𝚎𝚗𝚎 𝚐𝚛𝚊𝚗 𝚛𝚎𝚜𝚙𝚘𝚗𝚜𝚊𝚋𝚒𝚕𝚒𝚍𝚊𝚍 💥
-`.trim()
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.☕꒷
 
-    // DISEÑO DBZ DEMOTE
-    const noadmingp = `
-╔═══「 ❄️ 𝐏𝐎𝐃𝐄𝐑 𝐑𝐄𝐕𝐎𝐂𝐀𝐃𝐎 」═══╗
-║
-║ 𝗚𝗨𝗘𝗥𝗥𝗘𝗥𝗢 : ${userTag}
-║ 𝗘𝗦𝗧𝗔𝗗𝗢 : 🔒 RANGO REVOCADO
-║ 𝗣𝗢𝗥 : ${adminTag}
-║
-╠═══「 𝗔𝗖𝗘𝗦𝗢 𝗕𝗟𝗢𝗤𝗨𝗘𝗔𝗗𝗢 」═══╣
-║ [✗] Sin permisos de admin
-║ [✗] Comandos bloqueados
-║ [✗] Nivel: Guerrero Z
-╚══════════════╝
+ ⤷ ┇ 𝗔𝗟𝗘𝗥𝗧𝗔 𝗗𝗘 𝗚𝗥𝗨𝗣𝗢 ：✿ 。
+꒰ ◞⁺⊹ ．Nuevo Admin Detectado •
 
-> 𝚂𝚒𝚗 𝚊𝚞𝚛𝚊, 𝚜𝚒𝚗 𝚙𝚘𝚍𝚎𝚛 ⚡
-`.trim()
+  ꒱ ׁ. ᘏ 𝗚𝗨𝗘𝗥𝗘𝗥𝗢 𝗔𝗦𝗖𝗘𝗡𝗗𝗜𝗗𝗢 ׅ 𝆬 ָ֢ ෆ
+☕ ➛ Usuario: ${userTag}
+☕ ➛ Rango: *SUPER SAIYAJIN* ⚡
+☕ ➛ Otorgado por: ${adminTag}
+
+──愛 *PODERES DESBLOQUEADOS* ╏ 💥
+☕ ➛ Expulsar / Promover miembros
+☕ ➛ Editar info y nombre del grupo
+☕ ➛ Cambiar configuración
+☕ ➛ Activar modo anuncios
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369
+> "Con gran poder viene gran responsabilidad" 💥
+━━━━━━━━━━━`.trim()
+
+    // DISEÑO DBZ DEMOTE - ESTILO PREM
+    const noadmingp = `🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
+
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.💀꒷
+
+ ⤷ ┇ 𝗔𝗟𝗘𝗥𝗧𝗔 𝗗𝗘 𝗚𝗥𝗨𝗣𝗢 ：✿ 。
+꒰ ◞⁺⊹ ．Rango Revocado •
+
+  ꒱ ׁ. ᘏ 𝗚𝗨𝗘𝗥𝗘𝗥𝗢 𝗗𝗘𝗚𝗥𝗔𝗗𝗔𝗗𝗢 ׅ 𝆬 ָ֢ ෆ
+💀 ➛ Usuario: ${userTag}
+💀 ➛ Estado: *RANGO REVOCADO* 🔒
+💀 ➛ Por: ${adminTag}
+
+──愛 *ACCESO BLOQUEADO* ╏ ❄️
+💀 ➛ Sin permisos de administrador
+💀 ➛ Comandos de admin bloqueados
+💀 ➛ Nivel: Guerrero Z
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369
+> "Sin aura, sin poder" ⚡
+━━━━━━━━━━━`.trim()
 
     // LIMPIAR SESSION SI KICKEAN BOT
     if (chat.detect && m.messageStubType == 2) {
@@ -86,7 +98,7 @@ handler.before = async function (m, { conn }) {
         await conn.sendMessage(m.chat, {
             image: { url: banner },
             caption: admingp,
-      ...context
+           ...context
         }, { quoted: null })
         return
     }
@@ -96,7 +108,7 @@ handler.before = async function (m, { conn }) {
         await conn.sendMessage(m.chat, {
             image: { url: banner },
             caption: noadmingp,
-      ...context
+           ...context
         }, { quoted: null })
         return
     }
