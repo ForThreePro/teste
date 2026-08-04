@@ -7,22 +7,28 @@ let handler = async (m, { conn, text }) => {
   await conn.sendMessage(m.chat, { react: { text: '🐉', key: m.key } }).catch(_=>{})
 
   if (!text ||!text.includes('/')) {
-    return m.reply(`╭─🐉─❒ *『 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 』* ❒─🐉─╮
-│
-│ *💱 CASA DE CAMBIOS SAIYAJIN* 💱
-│
-│ *USO:*
-│.cambio [monto] / [CODIGO] / [CODIGO]
-│
-│ *EJEMPLOS:*
-│.cambio 100 / PEN / USD → Oficial
-│.cambio 100 / USD / ARS → BLUE 🇦🇷
-│.cambio 100 / ARS / PEN → BLUE Inverso 🇦🇷
-│
-│ *MONEDAS:* PEN, USD, EUR, ARS, COP, MXN, BRL...
-│
-│ > *¡Yo calculo más rápido que una Genkidama!* ⚡
-╰─────────────────────────🐉`)
+    return m.reply(`🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
+
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.💰꒷
+
+ ⤷ ┇ 𝗖𝗔𝗦𝗔 𝗗𝗘 𝗖𝗔𝗠𝗕𝗜𝗢𝗦 𝗦𝗔𝗜𝗬𝗔𝗝𝗜𝗡 ：✿ 。
+꒰ ◞⁺⊹ ．Sistema Financiero •
+
+  ꒱ ׁ. ᘏ 𝗜𝗡𝗦𝗧𝗥𝗨𝗖𝗜𝗢𝗡𝗘𝗦 ׅ 𝆬 ָ֢ ෆ
+💰 ➛.cambio [monto] / [CODIGO] / [CODIGO]
+
+──愛 *EJEMPLOS* ╏ ⚡
+💰 ➛.cambio 100 / PEN / USD → Oficial
+💰 ➛.cambio 100 / USD / ARS → BLUE 🇦🇷
+💰 ➛.cambio 100 / ARS / PEN → BLUE Inverso 🇦🇷
+
+──愛 *MONEDAS SOPORTADAS* ╏ 🌍
+💰 ➛ PEN, USD, EUR, ARS, COP, MXN, BRL...
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369
+> *¡Yo calculo más rápido que una Genkidama!* ⚡
+━━━━━━━━━━━`)
   }
 
   let [montoStr, de, a] = text.split('/').map(v => v.trim().toUpperCase())
@@ -66,25 +72,45 @@ let handler = async (m, { conn, text }) => {
 
     let fecha = new Date().toLocaleDateString('es-PE', { timeZone: TZ })
 
-    let txt = `╭─🐉─❒ *『 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 』* ❒─🐉─╮
-│
-│ *💰 CONVERSIÓN SAIYAJIN* 💰
-│ ${monto} *${de}*
-│ ⬇️ *¡KA-ME-HA-ME-HAAA!* 🟦
-│ *${total}* *${a}*
-│
-│ *📊 TASA:* ${tipoTasa}
-${tasaUSD_ARS? `│ *1 USD* = *${tasaUSD_ARS}* ARS` : ''}
-│ *📅 FECHA:* ${fecha}
-│
-╰─────────────────────────🐉
-> *${MARCA}* | Datos en tiempo real`
+    let txt = `🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
+
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.💰꒷
+
+ ⤷ ┇ 𝗖𝗢𝗡𝗩𝗘𝗥𝗦𝗜𝗢𝗡 𝗦𝗔𝗜𝗬𝗔𝗝𝗜𝗡 ：✿ 。
+꒰ ◞⁺⊹ ．Calculo Completado •
+
+  ꒱ ׁ. ᘏ 𝗥𝗘𝗦𝗨𝗟𝗧𝗔𝗗𝗢 ׅ 𝆬 ָ֢ ෆ
+💰 ➛ ${monto} *${de}*
+💰 ➛ ⬇️ *¡KA-ME-HA-ME-HAAA!* 🟦
+💰 ➛ *${total}* *${a}*
+
+──愛 *DETALLES DE LA TASA* ╏ 📊
+💰 ➛ Tipo: ${tipoTasa}
+${tasaUSD_ARS? `💰 ➛ 1 USD = ${tasaUSD_ARS} ARS` : ''}
+💰 ➛ Fecha: ${fecha}
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369
+> *${MARCA}* | Datos en tiempo real
+━━━━━━━━━━━`
 
     m.reply(txt)
 
   } catch(e) {
     console.log(e)
-    m.reply(`⚠️ *ERROR SAIYAJIN:* ${e.message}\n\n*Revisa los códigos:* PEN, USD, ARS, COP...`)
+    m.reply(`🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
+
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.⚠️꒷
+
+ ⤷ ┇ 𝗘𝗥𝗢𝗥 𝗗𝗘 𝗦𝗜𝗦𝗧𝗘𝗠𝗔 ：✿ 。
+
+──愛 *FALLA SAIYAJIN* ╏ ❄️
+⚠️ ➛ ${e.message}
+⚠️ ➛ Revisa los códigos: PEN, USD, ARS, COP...
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369
+━━━━━━━━━━━`)
   }
 }
 
