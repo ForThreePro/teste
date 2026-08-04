@@ -5,14 +5,18 @@ import { fileTypeFromBuffer } from "file-type"
 let handler = async (m, { conn }) => {
   let q = m.quoted? m.quoted : m
   let mime = (q.msg || q).mimetype || ''
-  if (!mime) return conn.reply(m.chat, `*🚜 GOKU PREM 🍓*
+  if (!mime) return conn.reply(m.chat, `🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
 
-*❌ ERROR ❌*
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.⚠️꒷
 
-╭─「 INSTRUCCION 」─╮
-│ *Responde a un archivo valido*
-│ *Formatos*: Imagen, Video, Audio, Doc
-╰──────────────────╯`, m)
+ ⤷ ┇ 𝗘𝗥𝗥𝗢𝗥 ：✿ 。
+
+──愛 *𝗜𝗡𝗦𝗧𝗥𝗨𝗖𝗜𝗢𝗡* ╏ ❄️
+⚠️ ➛ Responde a un archivo valido
+⚠️ ➛ Formatos: *Imagen, Video, Audio, Doc*
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369`, m)
 
   try {
     await conn.sendMessage(m.chat, { react: { text: '⏳', key: m.key } })
@@ -20,24 +24,41 @@ let handler = async (m, { conn }) => {
     let link = await myCloud(media)
     if (!link.url) throw new Error()
 
-    let txt = `*🍓 GOKU PREM 🚜*
+    let txt = `🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
 
-╭─「 ⚡ REPORTE 」─╮
-│ *ENLACE:* ${link.url}
-│ *ID:* ${link.id || 'N/A'}
-│ *TAMAÑO:* ${formatBytes(media.length)}
-│ *SERVIDOR:* evogb.win
-│ *BOT:* Goku
-╰─────────────────╯
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.🌌꒷
 
-> *"Subido a la nube por Goku"*`
+ ⤷ ┇ 𝗥𝗘𝗣𝗢𝗥𝗧𝗘 𝗗𝗘 𝗦𝗨𝗕𝗜𝗗𝗔 ：✿ 。
+꒰ ◞⁺⊹ ．Archivo en la nube •
+
+  ꒱ ׁ. ᘏ 𝗗𝗔𝗧𝗢𝗦 ׅ 𝆬 ָ֢ ෆ
+🌌 ➛ Enlace: ${link.url}
+🌌 ➛ ID: ${link.id || 'N/A'}
+🌌 ➛ Tamaño: ${formatBytes(media.length)}
+🌌 ➛ Servidor: *evogb.win*
+🌌 ➛ Bot: *SON GOKU PREM*
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369
+> *"Subido a la nube por Goku"* ☁️⚡`
 
     await conn.sendFile(m.chat, media, 'goku.' + link.url.split('.').pop(), txt, m)
     await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
   } catch (e) {
     console.error(e)
     await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-    await conn.reply(m.chat, `*🚜 GOKU PREM 🍓*\n\n*❌ ERROR DE SUBIDA ❌*`, m)
+    await conn.reply(m.chat, `🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
+
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.⚠️꒷
+
+ ⤷ ┇ 𝗘𝗥𝗥𝗢𝗥 𝗗𝗘 𝗦𝗨𝗕𝗜𝗗𝗔 ：✿ 。
+
+──愛 *𝗔𝗩𝗜𝗦𝗢* ╏ ❄️
+⚠️ ➛ No se pudo subir el archivo
+⚠️ ➛ Intenta con otro archivo
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369`, m)
   }
 }
 
