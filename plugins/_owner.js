@@ -14,16 +14,26 @@ END:VCARD`
         }
     }, { quoted: m })
 
-    await conn.reply(m.chat, `🐉 *𝐁𝐎𝐓 𝐒𝐎𝐍 𝐆𝐎𝐊𝐔 𝐏𝐑𝐄𝐌*
+    await conn.reply(m.chat, `🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
 
-╭─「 👑 𝐂𝐑𝐄𝐀𝐃𝐎𝐑 」─╮
-│
-│ *𝐍𝐎𝐌𝐁𝐑𝐄:* 𝐖𝐡𝐨𝐢𝐬 𝐘𝐚𝐥𝐢𝐜𝐨
-│ *𝐄𝐒𝐓𝐀𝐃𝐎:* 𝐊𝐚𝐦𝐞𝐡𝐚𝐦𝐞𝐡𝐚 𝐀𝐜𝐭𝐢𝐯𝐨 ⚡
-│
-╰─────────────────╯
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.☕꒷
 
-> 𝐍𝐨 𝐡𝐚𝐠𝐚𝐬 𝐬𝐩𝐚𝐦 𝐨 𝐭𝐞 𝐦𝐚𝐧𝐝𝐨 𝐮𝐧 𝐆𝐞𝐧𝐤𝐢 𝐃𝐚𝐦𝐚 🐉`, m)
+ ⤷ ┇ 𝗜𝗡𝗙𝗢𝗥𝗠𝗔𝗖𝗜𝗢𝗡 𝗗𝗘𝗟 𝗖𝗥𝗘𝗔𝗗𝗢𝗥 ：✿ 。
+꒰ ◞⁺⊹ ．Kame House •
+
+  ꒱ ׁ. ᘏ 𝗗𝗔𝗧𝗢𝗦 ׅ 𝆬 ָ֢ ෆ
+☕ ➛ Nombre: *Whois Yallico*
+☕ ➛ Estado: *Kamehameha Activo* ⚡
+☕ ➛ Numero: +51 927 174 369
+☕ ➛ Bot: *SON GOKU PREM* 🐉
+
+──愛 *MENSAJE* ╏ 💥
+☕ ➛ No hagas spam o te mando un Genki Dama
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369
+> *"El creador del sistema Saiyan"* 
+━━━━━━━━━━━`, m)
 }
 
 handler.help = ['owner']
