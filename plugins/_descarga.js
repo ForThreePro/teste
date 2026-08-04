@@ -310,7 +310,7 @@ let handler = async (m, { conn, text, command, usedPrefix }) => {
 
 .⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.⚠️꒷
 
- ⤷ ┇ 𝗘𝗥𝗢𝗥 𝗗𝗘 𝗦𝗜𝗦𝗧𝗘𝗠𝗔 ：✿ 。
+ ⤷ ┇ 𝗘𝗥𝗥𝗢𝗥 𝗗𝗘 𝗦𝗜𝗦𝗧𝗘𝗠𝗔 ：✿ 。
 
 ──愛 *FALLA DETECTADA* ╏ ❄️
 ⚠️ ➛ Detalle: ${msgs[e] || 'ERROR INESPERADO'}
