@@ -14,10 +14,6 @@ const SONGFINDER_API = 'https://songfinder.gg/api/recognize/url'
 const UGUU_UPLOAD = 'https://uguu.se/upload'
 const CLIP_SECONDS = 30
 
-const BOX_TOP = `╭─「 🎵 *BUSCADOR DE MUSICA* 」`
-const BOX_MID = `│`
-const BOX_BOT = `╰─────────────────`
-
 /* ====== SONGFINDER ====== */
 async function recognizeUrl(audioUrl) {
   const res = await fetch(SONGFINDER_API, {
@@ -69,10 +65,19 @@ async function downloadEvoGB(url) {
 let handler = async (m, { conn }) => {
   let q = m.quoted? m.quoted : m
   let mime = (q.msg || q).mimetype || ''
-  if (!mime ||!/audio|video/.test(mime)) return m.reply(`${BOX_TOP}
-${BOX_MID} *Como usar:* Responde a un audio o video
-${BOX_MID} *Comando:*.song
-${BOX_BOT}`)
+  if (!mime ||!/audio|video/.test(mime)) return m.reply(`🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
+
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.💭꒷
+
+ ⤷ ┇ 𝗕𝗨𝗦𝗖𝗔𝗗𝗢𝗥 𝗗𝗘 𝗠𝗨𝗦𝗜𝗖𝗔 ：✿ 。
+
+──愛 *COMO USAR* ╏ ❄️
+💭 ➛ Responde a un audio o video con:.song
+💭 ➛ Ejemplo: Responde a un estado de WhatsApp
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369
+━━━━━━━━━━━`)
 
   await m.react('🔍')
   let buffer = await q.download()
@@ -80,10 +85,21 @@ ${BOX_BOT}`)
 
   try {
     // 1. DETECTAR
-    await m.reply(`${BOX_TOP}
-${BOX_MID} 🔍 *Detectando canción...*
-${BOX_MID} ⏳ Procesando ${CLIP_SECONDS}s de audio
-${BOX_BOT}`)
+    await m.reply(`🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
+
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.💭꒷
+
+ ⤷ ┇ 𝗗𝗘𝗧𝗘𝗖𝗧𝗔𝗡𝗗𝗢 𝗖𝗔𝗡𝗖𝗜𝗢𝗡 ：✿ 。
+꒰ ◞⁺⊹ ．Shazam Saiyan •
+
+  ꒱ ׁ. ᘏ 𝗣𝗥𝗢𝗖𝗘𝗦𝗢 ׅ 𝆬 ָ֢ ෆ
+💭 ➛ Analizando ${CLIP_SECONDS}s de audio...
+💭 ➛ Extrayendo energia del sonido ⚡
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369
+> *Esperando resultado...*
+━━━━━━━━━━━`)
 
     let clip = await prepareClip(buffer, CLIP_SECONDS)
     let url = await uploadUguu(clip)
@@ -97,13 +113,23 @@ ${BOX_BOT}`)
     let audioBuffer = await (await fetch(audio.downloadUrl)).buffer()
 
     // 3. ENVIAR 1 SOLO MENSAJE + AUDIO
-    let texto = `${BOX_TOP}
-${BOX_MID} ✅ *Canción encontrada y enviando audio*
-${BOX_MID}
-${BOX_MID} 🎶 *Título:* ${song.title}
-${BOX_MID} 👤 *Artista:* ${song.artist}
-${BOX_MID} ⏱️ *Duración:* ${vid.timestamp}
-${BOX_BOT}`
+    let texto = `🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
+
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.💭꒷
+
+ ⤷ ┇ 𝗖𝗔𝗡𝗖𝗜𝗢𝗡 𝗘𝗡𝗖𝗢𝗡𝗧𝗥𝗔𝗗𝗔 ：✿ 。
+꒰ ◞⁺⊹ ．Descarga completa •
+
+  ꒱ ׁ. ᘏ 𝗗𝗘𝗧𝗔𝗟𝗘𝗦 ׅ 𝆬 ָ֢ ෆ
+💭 ➛ Titulo: *${song.title}*
+💭 ➛ Artista: *${song.artist}*
+💭 ➛ Duracion: *${vid.timestamp}*
+💭 ➛ Estado: *Enviando audio* ✅
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369
+> *"La musica es el poder del alma"* 🎵
+━━━━━━━━━━━`
 
     await conn.sendMessage(m.chat, { text: texto }, { quoted: m })
 
@@ -117,10 +143,19 @@ ${BOX_BOT}`
 
   } catch(e) {
     await m.react('❌')
-    m.reply(`${BOX_TOP}
-${BOX_MID} ❌ *Error*
-${BOX_MID} ${e.message}
-${BOX_BOT}`)
+    m.reply(`🐉 𓆩 𝗦𝗢𝗡 𝗚𝗢𝗞𝗨 𝗣𝗥𝗘𝗠 𓆪 🐉
+
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐏𝐫𝐞𝐦\`\` —˙𖦹.⚠️꒷
+
+ ⤷ ┇ 𝗘𝗥𝗢𝗥 𝗗𝗘 𝗦𝗜𝗦𝗧𝗘𝗠𝗔 ：✿ 。
+
+──愛 *FALLA* ╏ ❄️
+⚠️ ➛ ${e.message}
+⚠️ ➛ Intenta con un audio mas claro
+
+━━━━━━━━━━━
+*Owner*: @whois.yallico | *Numero*: +51 927 174 369
+━━━━━━━━━━━`)
   }
 }
 
