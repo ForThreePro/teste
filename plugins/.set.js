@@ -1,115 +1,140 @@
-let handler = async (m, { conn, command, usedPrefix, isAdmin }) => {
+let dbSorteos = global.dbSorteos || (global.dbSorteos = {})
 
-    global.db.data.sorteos = global.db.data.sorteos || {}
-    let sorteos = global.db.data.sorteos
-    let chatId = m.chat
-    sorteos[chatId] = sorteos[chatId] || {}
+let handler = async (m, { conn, isAdmin, command, args }) => {
+    if (!m.isGroup) return m.reply(`🎀 *BOT FRESITA* 🎀\n\n🌸 Este comando solo funciona en grupos 🌸`)
 
-    const dias = ['lunes','martes','miercoles','jueves','viernes','sabado']
-    const emojis = {lunes:'🌙', martes:'🌌', miercoles:'✨', jueves:'🌠', viernes:'💫', sabado:'👑'}
-    const aurora = '~*~*~*~*~*~*~*~*~*~'
+    let user = `@${m.sender.split('@')[0]}` // MENCION IGUAL QUE EN JUEGOS
+    let diasValidos = ['lunes','martes','miercoles','jueves','viernes','sabado'] // SIN DOMINGO
+    let emojis = {lunes:'🌙', martes:'💖', miercoles:'🌷', jueves:'👀', viernes:'💕', sabado:'🎀'}
 
-    let dia = command.replace(/set|borrar/g,'').toLowerCase()
-    let user = `@${m.sender.split('@')[0]}` // sistema de mencion que usamos en juegos
+    if (!dbSorteos[m.chat]) dbSorteos[m.chat] = {}
+    diasValidos.forEach(d => { if (!dbSorteos[m.chat][d]) dbSorteos[m.chat][d] = [] })
 
-    // Foto del grupo
-    let pp = await conn.profilePictureUrl(chatId, 'image').catch(_ => 'https://i.imgur.com/8K2JhZQ.jpg')
+    try {
+        // ====== COMANDO:.verlunes.vermartes etc ======
+        if (command.startsWith('ver')) {
+            let dia = command.replace('ver','')
+            if (!diasValidos.includes(dia)) return m.reply(`🎀 *BOT FRESITA* 🎀\n\n❌ Usa:.ver[lunes-sabado] ${user}`, m, {mentions:[m.sender]})
 
-    // ===== 1. ASIGNAR.setlunes @user =====
-    if (command.startsWith('set')) {
-        if (!isAdmin) return m.reply(`${aurora}\n❌ ACCESO DENEGADO ${user}\n${aurora}`, m, {mentions:[m.sender]})
-        if (!dias.includes(dia)) return m.reply(`${aurora}\n❌ DÍA INVÁLIDO ${user}\n${aurora}`, m, {mentions:[m.sender]})
+            let lista = dbSorteos[m.chat][dia]
+            if (lista.length === 0) return m.reply(`🎀 *BOT FRESITA* 🎀\n\n🌸 ${user} Awww no hay nadie anotado para el ${emojis[dia]} *${dia}* 🌸`, m, {mentions:[m.sender]})
 
-        let mentioned = m.mentionedJid
-        if (mentioned.length === 0) return m.reply(`${aurora}\n❌ FALTA MENCIONAR ${user}\nEj: ${usedPrefix}set${dia} @user1 @user2\n${aurora}`, m, {mentions:[m.sender]})
+            let txt = `🎀 *BOT FRESITA* 🎀
 
-        sorteos[chatId][dia] = [...new Set(mentioned)]
+╭─── ⋆⋅ ♡ ⋅⋆ ───╮
+  ${emojis[dia]} LISTA DE ${dia.toUpperCase()} ${emojis[dia]}
+╰─── ⋆⋅ ♡ ⋅⋆ ───╯
 
-        let list = sorteos[chatId][dia].map((u, i) => `✨ ${i+1}. @${u.split('@')[0]}`).join('\n')
-        let msg = `${aurora}
-🌌 AURORA ${dia.toUpperCase()} ${aurora}
+${user} está revisando 💅
 
-${user} asignó el turno
-📅 Fecha: ${new Date().toLocaleDateString('es')}
+🌷 ${lista.map((v,i) => `${i+1}. @${v.split('@')[0]} 💕`).join('\n🌷 ')}
 
-✧ LUZ DEL NORTE ✧
-${list}
-
-~* brilla con tu sorteo *~
-Usa *${usedPrefix}${dia}* para recordar`
-        await conn.sendMessage(m.chat, { image: { url: pp }, caption: msg, mentions: mentioned.concat(m.sender) })
-        return
-    }
-
-    // ===== 2. BORRAR.borrarlunes =====
-    if (command.startsWith('borrar')) {
-        if (!isAdmin) return m.reply(`${aurora}\n❌ ACCESO DENEGADO ${user}\n${aurora}`, m, {mentions:[m.sender]})
-        if (!sorteos[chatId][dia] || sorteos[chatId][dia].length === 0) return m.reply(`${aurora}\n⚠️ NO HAY LUZ EN ${dia.toUpperCase()} ${user}\n${aurora}`, m, {mentions:[m.sender]})
-        delete sorteos[chatId][dia]
-        return m.reply(`${aurora}\n🗑️ AURORA APAGADA\n${user} borró ${dia.toUpperCase()}\n${aurora}`, m, {mentions:[m.sender]})
-    }
-
-    // ===== 3. RECORDATORIO.lunes =====
-    if (dias.includes(command.toLowerCase())) {
-        // Cualquiera puede ver la lista, solo set/borrar es de admin
-        let asignados = sorteos[chatId][command.toLowerCase()]
-        if (!asignados ||!asignados.length) return m.reply(`${aurora}\n🌌 CIELO VACÍO ${user}\nUsa: ${usedPrefix}set${command} @user\n${aurora}`, m, {mentions:[m.sender]})
-
-        let list = asignados.map((u, i) => `✨ ${i+1}. @${u.split('@')[0]}`).join('\n')
-
-        let msg = `${aurora}
-🌌 AURORA ${command.toUpperCase()} ${aurora}
-
-${emojis[command]} Hoy le toca a ${command.toUpperCase()} ${emojis[command]}
-${user} está recordando
-
-✧ CONSTELACIÓN ✧
-${list}
-
-~* Tareas estelares *~
-1. Realizar sorteo
-2. Pedir reacciones
-3. Compartir evidencia
-
-Que su luz ilumine el grupo ✨`
-        await conn.sendMessage(m.chat, { image: { url: pp }, caption: msg, mentions: asignados.concat(m.sender) })
-        return
-    }
-
-    // ===== 4. VER TODO.ver =====
-    if (command === 'ver') {
-        let diasConData = dias.filter(d => Array.isArray(sorteos[chatId][d]) && sorteos[chatId][d].length > 0)
-        if (diasConData.length === 0) return m.reply(`${aurora}\n🌌 CIELO NOCTURNO VACÍO ${user}\n${aurora}`, m, {mentions:[m.sender]})
-
-        let txt = `${aurora}
-🌌 CIELO SEMANAL - ${user}
-${aurora}\n`
-
-        let todos = []
-        for(let d of dias){
-            if(!Array.isArray(sorteos[chatId][d]) || sorteos[chatId][d].length === 0) continue
-            txt += `\n${emojis[d]} *${d.toUpperCase()}*\n`
-            sorteos[chatId][d].forEach((u, i) => {
-                txt += `✨ ${i+1}. @${u.split('@')[0]}\n`
-                todos.push(u)
-            })
+╭─── ⋆⋅ ♡ ⋅⋆ ───╮
+  💌 TOTAL: ${lista.length} preciosas 💌
+╰─── ⋆⋅ ♡ ⋅⋆ ───╯
+`
+            await conn.reply(m.chat, txt, m, { mentions: lista.concat(m.sender) })
+            return
         }
-        txt += `\n~* que las auroras los guíen *~`
-        await conn.sendMessage(m.chat, { image: { url: pp }, caption: txt, mentions: [...new Set(todos.concat(m.sender))] })
-        return
+
+        // ====== COMANDO:.tabla ======
+        if (command === 'tabla') {
+            if (!isAdmin) return m.reply(`🎀 *BOT FRESITA* 🎀\n\n💅 Solo admins ${user}`, m, {mentions:[m.sender]})
+            await conn.sendMessage(m.chat, { react: { text: '📊', key: m.key } })
+            let totalGeneral = 0
+            let texto = `🎀 *BOT FRESITA* 🎀\n\n╭─── ⋆⋅ ♡ ⋅⋆ ───╮\n 📊 TABLA LUNES A SÁBADO 📊\n╰─── ⋆⋅ ♡ ⋅⋆ ───╯\n\n${user}\n\n`
+
+            let todos = []
+            diasValidos.forEach(d => {
+                let lista = dbSorteos[m.chat][d]
+                totalGeneral += lista.length
+                texto += `${emojis[d]} *${d.toUpperCase()}*: ${lista.length} 💕\n`
+                if(lista.length > 0) {
+                    texto += ` ${lista.map((v,i) => `@${v.split('@')[0]}`).join(' | ')}\n\n`
+                    todos.push(...lista)
+                }
+            })
+            texto += `╭─── ⋆⋅ ♡ ⋅⋆ ───╮\n 🌹 TOTAL GENERAL: ${totalGeneral} 🌹\n╰─── ⋆⋅ ♡ ⋅⋆ ───╯`
+            await conn.reply(m.chat, texto, m, { mentions: [...new Set(todos.concat(m.sender))] })
+            return
+        }
+
+        // ====== COMANDO:.limpiar ======
+        if (command === 'limpiar') {
+            if (!isAdmin) return m.reply(`🎀 *BOT FRESITA* 🎀\n\n💅 Solo admins ${user}`, m, {mentions:[m.sender]})
+            let target = args[0]?.toLowerCase()
+            await conn.sendMessage(m.chat, { react: { text: '🗑️', key: m.key } })
+
+            if (target === 'todo') {
+                diasValidos.forEach(d => dbSorteos[m.chat][d] = [])
+                return m.reply(`🎀 *BOT FRESITA* 🎀\n✨ ${user} limpió toda la semana ✨\nDe lunes a sábado 🌸`, m, {mentions:[m.sender]})
+            }
+            if (!diasValidos.includes(target)) return m.reply(`🎀 *BOT FRESITA* 🎀\n❌ Usa:.limpiar[lunes-sabado] o.limpiar todo ${user}`, m, {mentions:[m.sender]})
+
+            dbSorteos[m.chat][target] = []
+            return m.reply(`🎀 *BOT FRESITA* 🎀\n\n💖 ${user} limpió la lista del ${emojis[target]} *${target}* 💖`, m, {mentions:[m.sender]})
+        }
+
+        // ====== COMANDOS:.lunes.martes etc SOLO RESPONDIENDO ======
+        if (diasValidos.includes(command)) {
+            if (!isAdmin) return m.reply(`🎀 *BOT FRESITA* 🎀\n\n💅 Solo admins ${user}`, m, {mentions:[m.sender]})
+            let dia = command
+            let lista = dbSorteos[m.chat][dia]
+
+            if (!m.quoted) {
+                return m.reply(`🎀 *BOT FRESITA* 🎀\n\n❌ ${user} tienes que *responder al mensaje* de la persona\n\nEjemplo: Responde al mensaje de Pepito y pon.${dia} 🌷`, m, {mentions:[m.sender]})
+            }
+
+            let jid = m.quoted.sender
+            let yaEstaba = lista.includes(jid)
+
+            if (!yaEstaba) lista.push(jid)
+            await conn.sendMessage(m.chat, { react: { text: yaEstaba? '👀' : '💖', key: m.key } })
+
+            let txt = `🎀 *BOT FRESITA* 🎀
+
+╭─── ⋆⋅ ♡ ⋅⋆ ───╮
+  ${emojis[dia]} ACTUALIZADO ${dia.toUpperCase()} ${emojis[dia]}
+╰─── ⋆⋅ ♡ ⋅⋆ ───╯
+
+${user}
+
+${yaEstaba? `👀 *AVISO:* @${jid.split('@')[0]} ya estaba anotada 💅` : `💖 *NUEVA:* @${jid.split('@')[0]} fue agregada 🌷`}
+
+╭─── ⋆⋅ LISTA ACTUAL ⋅⋆ ───╮
+${lista.map((v,i) => `🌹 ${i+1}. @${v.split('@')[0]}`).join('\n')}
+╰─────────────────╯
+
+💌 TOTAL: ${lista.length} preciosas 💌
+`
+            await conn.reply(m.chat, txt, m, { mentions: lista.concat(m.sender) })
+            return
+        }
+
+    } catch (e) {
+        await m.reply(`❌ ERROR: ${e.message}`)
     }
 }
 
+// HELP SIN DOMINGO 🍓
 handler.help = [
-'📅 *SISTEMA AURORA* 📅',
-'setlunes @ | setmartes @ |...',
-'lunes | martes |...',
-'borrarlunes | borrarmartes |...',
-'ver : Ver cronograma completo'
+'lunes ( Responde Al Mensaje )',
+'martes ( Responde Al Mensaje )',
+'miercoles ( Responde Al Mensaje )',
+'jueves ( Responde Al Mensaje )',
+'viernes ( Responde Al Mensaje )',
+'sabado ( Responde Al Mensaje )',
+'verlunes ( Ver Día Lunes )',
+'vermartes ( Ver Día Martes )',
+'vermiercoles ( Ver Día Miércoles )',
+'verjueves ( Ver Día Jueves )',
+'veviernes ( Ver Día Viernes )',
+'versabado ( Ver Día Sábado )',
+'tabla ( Ver Días Completos )',
+'limpiar (lunes, martes, miercoles, etc )',
+'limpiar todo'
 ]
-handler.tags = ['sorteos']
-handler.command = /^(setlunes|setmartes|setmiercoles|setjueves|setviernes|setsabado|borrarlunes|borrarmartes|borrarmiercoles|borrarjueves|borrarviernes|borrarsabado|lunes|martes|miercoles|jueves|viernes|sabado|ver)$/i
-handler.group = true
-handler.admin = false // lo controlo manual arriba
-
+handler.tags = ['sorteo']
+handler.command = ['lunes','martes','miercoles','jueves','viernes','sabado','verlunes','vermartes','vermiercoles','verjueves','verviernes','versabado','tabla','limpiar'] // Arreglé el "viernes" duplicado
+handler.admin = false // El control de admin ya está manual arriba
 export default handler
