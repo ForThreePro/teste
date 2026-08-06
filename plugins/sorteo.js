@@ -3,78 +3,94 @@ let db = global.db.data.agendaSorteos = global.db.data.agendaSorteos || {}
 let handler = async (m, { conn, isAdmin, command, args }) => {
     if (!m.isGroup) return m.reply(`❌ Este comando solo funciona en grupos`)
 
+    let user = `@${m.sender.split('@')[0]}` // MENCION2 DEL QUE USA
     let chat = db[m.chat] = db[m.chat] || {lunes:null,martes:null,miercoles:null,jueves:null,viernes:null,sabado:null}
     let dias = ['lunes','martes','miercoles','jueves','viernes','sabado']
     let emoji = {lunes:'🌙', martes:'💼', miercoles:'📊', jueves:'📢', viernes:'🎉', sabado:'🎁'}
 
     // =====.setlunes @usuario =====
     if (command.startsWith('set')) {
-        if (!isAdmin) return m.reply(`❌ Solo admins`)
+        if (!isAdmin) return m.reply(`❌ Solo admins ${user}`, m, { mentions: [m.sender] })
         let dia = command.replace('set','')
         if (!dias.includes(dia)) return
 
-        let who = m.mentionedJid[0]
-        if (!who) return m.reply(`❌ Menciona a la persona\nEjemplo:.set${dia} @usuario`)
+        // ACEPTA @tag / responder / numero
+        let who = m.mentionedJid[0] || m.quoted?.sender || (args[0]? args[0].replace(/[^0-9]/g, '') + '@s.whatsapp.net' : null)
+        if (!who) return m.reply(`❌ ${user} Menciona a la persona\nEjemplo:.set${dia} @usuario`, m, { mentions: [m.sender] })
 
+        let target = `@${who.split('@')[0]}` // MENCION2 DEL ASIGNADO
         chat[dia] = who
-        await m.reply(`✅ *${dia.toUpperCase()}* ahora le toca sortear a @${who.split('@')[0]}`, null, { mentions: [who] })
-        return
+
+        let txt = `✅ *AGENDA ACTUALIZADA*
+
+${user}
+${emoji[dia]} *${dia.toUpperCase()}* ahora le toca sortear a ${target}`
+
+        return conn.reply(m.chat, txt, m, { mentions: [m.sender, who] }) // MENCIONA A LOS 2
     }
 
     // =====.lunes =====
     if (dias.includes(command)) {
         let dia = command
         let responsable = chat[dia]
-        if (!responsable) return m.reply(`⚠️ No hay nadie asignado para el *${dia.toUpperCase()}*`)
+        if (!responsable) return m.reply(`⚠️ ${user} No hay nadie asignado para *${dia.toUpperCase()}*`, m, { mentions: [m.sender] })
 
-        let txt = `📅 *AGENDA DE SORTEOS*
+        let target = `@${responsable.split('@')[0]}`
+        let txt = `📅 *AGENDA DE SORTEOS STAFF*
 
-${emoji[dia]} *${dia.toUpperCase()}*
-Responsable: @${responsable.split('@')[0]}
+${user} consultó el día ${emoji[dia]} *${dia.toUpperCase()}*
 
-Recuerden: A esa persona se le cobra el sorteo del día`
-        await conn.reply(m.chat, txt, m, { mentions: [responsable] })
-        return
+👤 Responsable: ${target}
+
+Recuerden cobrarle el sorteo del día`
+
+        return conn.reply(m.chat, txt, m, { mentions: [m.sender, responsable] }) // MENCIONA A LOS 2
     }
 
     // =====.tabla =====
     if (command === 'tabla') {
-        let txt = `📊 *TABLA SEMANAL DE SORTEOS STAFF* 📊\n\n`
+        if (!isAdmin) return m.reply(`❌ Solo admins ${user}`, m, { mentions: [m.sender] })
+
+        let txt = `📊 *TABLA SEMANAL DE SORTEOS STAFF* 📊\n\n${user}\n\n`
+        let todos = []
         dias.forEach(d => {
             txt += `${emoji[d]} *${d.toUpperCase()}*: `
-            txt += chat[d]? `@${chat[d].split('@')[0]}\n` : `Sin asignar\n`
+            if (chat[d]) {
+                txt += `@${chat[d].split('@')[0]}\n`
+                todos.push(chat[d])
+            } else {
+                txt += `Sin asignar\n`
+            }
         })
-        let todos = dias.map(d => chat[d]).filter(Boolean)
-        await conn.reply(m.chat, txt, m, { mentions: todos })
-        return
-    }
 
-    // =====.quitarlunes =====
-    if (command.startsWith('quitar')) {
-        if (!isAdmin) return m.reply(`❌ Solo admins`)
-        let dia = command.replace('quitar','')
-        if (!dias.includes(dia)) return
-        chat[dia] = null
-        return m.reply(`✅ Se quitó al responsable del *${dia}*`)
+        return conn.reply(m.chat, txt, m, { mentions: [m.sender,...todos] }) // MENCIONA A TODOS + A TI
     }
 
     // =====.recordatorio =====
     if (command === 'recordatorio') {
-        let hoy = new Date().toLocaleDateString('es', { weekday: 'long' }).toLowerCase()
-        hoy = hoy.replace('miércoles','miercoles').replace('sábado','sabado')
-        if (!dias.includes(hoy)) return m.reply(`Hoy es domingo, no hay sorteo`)
+        if (!isAdmin) return m.reply(`❌ Solo admins ${user}`, m, { mentions: [m.sender] })
+
+        let hoy = new Date().toLocaleDateString('es-PE', { weekday: 'long' }).toLowerCase()
+           .replace('miércoles','miercoles').replace('sábado','sabado')
+        if (!dias.includes(hoy)) return m.reply(`Hoy es domingo, descansen ${user}`, m, { mentions: [m.sender] })
 
         let responsable = chat[hoy]
-        if (!responsable) return m.reply(`⚠️ No hay nadie asignado para hoy *${hoy}*`)
+        if (!responsable) return m.reply(`⚠️ ${user} No hay nadie asignado para hoy *${hoy}*`, m, { mentions: [m.sender] })
 
-        let txt = `🔔 *RECORDATORIO DE SORTEO* 🔔\n\n@${responsable.split('@')[0]} te toca sortear hoy *${hoy.toUpperCase()}* 🎁\nNo olvides pasar tu sorteo`
-        await conn.reply(m.chat, txt, m, { mentions: [responsable] })
-        return
+        let target = `@${responsable.split('@')[0]}`
+        let txt = `🔔 *RECORDATORIO DE SORTEO* 🔔
+
+${user}
+
+${target} te toca sortear hoy *${hoy.toUpperCase()}* 🎁
+No olvides pasar tu sorteo`
+
+        return conn.reply(m.chat, txt, m, { mentions: [m.sender, responsable] }) // MENCIONA A LOS 2
     }
 
 }
-handler.help = ['setlunes @', 'lunes', 'tabla', 'quitarlunes', 'recordatorio']
+handler.help = ['setlunes @', 'lunes', 'tabla', 'recordatorio']
 handler.tags = ['staff']
-handler.command = ['setlunes','setmartes','setmiercoles','setjueves','setviernes','setsabado','lunes','martes','miercoles','jueves','viernes','sabado','tabla','quitarlunes','quitarmartes','quitarmiercoles','quitarjueves','quitarviernes','quitarsabado','recordatorio']
+handler.command = ['setlunes','setmartes','setmiercoles','setjueves','setviernes','setsabado','lunes','martes','miercoles','jueves','viernes','sabado','tabla','recordatorio']
 handler.group = true
 export default handler
