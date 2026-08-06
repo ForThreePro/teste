@@ -1,75 +1,115 @@
-let handler = async (m, { conn, command, text }) => {
-    let chat = global.db.data.chats[m.chat]
-    if (!chat.listaDias) chat.listaDias = {
-        lunes: [], martes: [], miercoles: [], jueves: [], viernes: [], sabado: []
-    }
+let handler = async (m, { conn, command, usedPrefix, isAdmin }) => {
 
-    let dia = command.replace(/set|borrar|sortear/g, '')
-    let diasValidos = ['lunes','martes','miercoles','jueves','viernes','sabado']
-    if (!diasValidos.includes(dia)) return
+    global.db.data.sorteos = global.db.data.sorteos || {}
+    let sorteos = global.db.data.sorteos
+    let chatId = m.chat
+    sorteos[chatId] = sorteos[chatId] || {}
 
-    let user = `@${m.sender.split('@')[0]}`
+    const dias = ['lunes','martes','miercoles','jueves','viernes','sabado']
+    const emojis = {lunes:'🌙', martes:'🌌', miercoles:'✨', jueves:'🌠', viernes:'💫', sabado:'👑'}
+    const aurora = '~*~*~*~*~*~*~*~*~*~'
 
-    // =====.setlunes @ =====
+    let dia = command.replace(/set|borrar/g,'').toLowerCase()
+    let user = `@${m.sender.split('@')[0]}` // sistema de mencion que usamos en juegos
+
+    // Foto del grupo
+    let pp = await conn.profilePictureUrl(chatId, 'image').catch(_ => 'https://i.imgur.com/8K2JhZQ.jpg')
+
+    // ===== 1. ASIGNAR.setlunes @user =====
     if (command.startsWith('set')) {
-        let users = m.mentionedJid
-        if (!users || users.length === 0) return m.reply(`❌ *Uso:*.set${dia} @persona1 @persona2`, m)
+        if (!isAdmin) return m.reply(`${aurora}\n❌ ACCESO DENEGADO ${user}\n${aurora}`, m, {mentions:[m.sender]})
+        if (!dias.includes(dia)) return m.reply(`${aurora}\n❌ DÍA INVÁLIDO ${user}\n${aurora}`, m, {mentions:[m.sender]})
 
-        chat.listaDias[dia] = [...new Set([...chat.listaDias[dia],...users])]
+        let mentioned = m.mentionedJid
+        if (mentioned.length === 0) return m.reply(`${aurora}\n❌ FALTA MENCIONAR ${user}\nEj: ${usedPrefix}set${dia} @user1 @user2\n${aurora}`, m, {mentions:[m.sender]})
 
-        let lista = chat.listaDias[dia].map((v,i) => `${i+1}. @${v.split('@')[0]}`).join('\n')
-        let txt = `✅ *${user} ACTUALIZÓ LA LISTA DE ${dia.toUpperCase()}*\n\n${lista}\n\n_Total: ${chat.listaDias[dia].length}_`
-        return conn.reply(m.chat, txt, m, { mentions: chat.listaDias[dia].concat(m.sender) })
+        sorteos[chatId][dia] = [...new Set(mentioned)]
+
+        let list = sorteos[chatId][dia].map((u, i) => `✨ ${i+1}. @${u.split('@')[0]}`).join('\n')
+        let msg = `${aurora}
+🌌 AURORA ${dia.toUpperCase()} ${aurora}
+
+${user} asignó el turno
+📅 Fecha: ${new Date().toLocaleDateString('es')}
+
+✧ LUZ DEL NORTE ✧
+${list}
+
+~* brilla con tu sorteo *~
+Usa *${usedPrefix}${dia}* para recordar`
+        await conn.sendMessage(m.chat, { image: { url: pp }, caption: msg, mentions: mentioned.concat(m.sender) })
+        return
     }
 
-    // =====.lunes =====
-    if (diasValidos.includes(command)) {
-        let lista = chat.listaDias[dia]
-        if (lista.length === 0) return m.reply(`📅 *${user}*\n\nLa lista de *${dia}* está vacía.\nUsa:.set${dia} @para agregar`, m)
-
-        let texto = `📅 *LISTA ${dia.toUpperCase()} - ${user}*\n\n`
-        lista.forEach((v, i) => {
-            texto += `${i+1}. @${v.split('@')[0]}\n`
-        })
-        texto += `\n_Total: ${lista.length} persona(s)_`
-        return conn.reply(m.chat, texto, m, { mentions: lista.concat(m.sender) })
-    }
-
-    // =====.borrarlunes =====
+    // ===== 2. BORRAR.borrarlunes =====
     if (command.startsWith('borrar')) {
-        if (!m.isAdmin) return m.reply(`❌ Solo admins ${user}`, m, { mentions: [m.sender] })
-        if (chat.listaDias[dia].length === 0) return m.reply(`⚠️ La lista de ${dia} ya está vacía ${user}`, m, { mentions: [m.sender] })
-        chat.listaDias[dia] = []
-        return m.reply(`🗑️ *${user} borró la lista de ${dia}*`, m, { mentions: [m.sender] })
+        if (!isAdmin) return m.reply(`${aurora}\n❌ ACCESO DENEGADO ${user}\n${aurora}`, m, {mentions:[m.sender]})
+        if (!sorteos[chatId][dia] || sorteos[chatId][dia].length === 0) return m.reply(`${aurora}\n⚠️ NO HAY LUZ EN ${dia.toUpperCase()} ${user}\n${aurora}`, m, {mentions:[m.sender]})
+        delete sorteos[chatId][dia]
+        return m.reply(`${aurora}\n🗑️ AURORA APAGADA\n${user} borró ${dia.toUpperCase()}\n${aurora}`, m, {mentions:[m.sender]})
     }
 
-    // =====.sortearlunes NUEVO =====
-    if (command.startsWith('sortear')) {
-        let lista = chat.listaDias[dia]
-        if (lista.length === 0) return m.reply(`❌ No hay nadie en la lista de ${dia} ${user}`, m, { mentions: [m.sender] })
+    // ===== 3. RECORDATORIO.lunes =====
+    if (dias.includes(command.toLowerCase())) {
+        // Cualquiera puede ver la lista, solo set/borrar es de admin
+        let asignados = sorteos[chatId][command.toLowerCase()]
+        if (!asignados ||!asignados.length) return m.reply(`${aurora}\n🌌 CIELO VACÍO ${user}\nUsa: ${usedPrefix}set${command} @user\n${aurora}`, m, {mentions:[m.sender]})
 
-        let ganador = lista[Math.floor(Math.random() * lista.length)]
-        let txt = `🎉 *SORTEO ${dia.toUpperCase()}* 🎉\n\n${user} sacó a:\n\n👑 @${ganador.split('@')[0]} 👑\n\n*FELICIDADES!*`
-        return conn.reply(m.chat, txt, m, { mentions: [ganador, m.sender] })
+        let list = asignados.map((u, i) => `✨ ${i+1}. @${u.split('@')[0]}`).join('\n')
+
+        let msg = `${aurora}
+🌌 AURORA ${command.toUpperCase()} ${aurora}
+
+${emojis[command]} Hoy le toca a ${command.toUpperCase()} ${emojis[command]}
+${user} está recordando
+
+✧ CONSTELACIÓN ✧
+${list}
+
+~* Tareas estelares *~
+1. Realizar sorteo
+2. Pedir reacciones
+3. Compartir evidencia
+
+Que su luz ilumine el grupo ✨`
+        await conn.sendMessage(m.chat, { image: { url: pp }, caption: msg, mentions: asignados.concat(m.sender) })
+        return
     }
 
+    // ===== 4. VER TODO.ver =====
+    if (command === 'ver') {
+        let diasConData = dias.filter(d => Array.isArray(sorteos[chatId][d]) && sorteos[chatId][d].length > 0)
+        if (diasConData.length === 0) return m.reply(`${aurora}\n🌌 CIELO NOCTURNO VACÍO ${user}\n${aurora}`, m, {mentions:[m.sender]})
+
+        let txt = `${aurora}
+🌌 CIELO SEMANAL - ${user}
+${aurora}\n`
+
+        let todos = []
+        for(let d of dias){
+            if(!Array.isArray(sorteos[chatId][d]) || sorteos[chatId][d].length === 0) continue
+            txt += `\n${emojis[d]} *${d.toUpperCase()}*\n`
+            sorteos[chatId][d].forEach((u, i) => {
+                txt += `✨ ${i+1}. @${u.split('@')[0]}\n`
+                todos.push(u)
+            })
+        }
+        txt += `\n~* que las auroras los guíen *~`
+        await conn.sendMessage(m.chat, { image: { url: pp }, caption: txt, mentions: [...new Set(todos.concat(m.sender))] })
+        return
+    }
 }
 
 handler.help = [
-'📅 *SISTEMA DE SORTEO POR DÍAS* 📅',
+'📅 *SISTEMA AURORA* 📅',
 'setlunes @ | setmartes @ |...',
 'lunes | martes |...',
 'borrarlunes | borrarmartes |...',
-'sortearlunes | sortearmartes |...'
+'ver : Ver cronograma completo'
 ]
-handler.tags = ['sorteo']
-handler.command = [
-    'setlunes','setmartes','setmiercoles','setjueves','setviernes','setsabado',
-    'lunes','martes','miercoles','jueves','viernes','sabado',
-    'borrarlunes','borrarmartes','borrarmiercoles','borrarjueves','borrarviernes','borrarsabado',
-    'sortearlunes','sortearmartes','sortearmiercoles','sortearjueves','sortearviernes','sortearsabado'
-]
+handler.tags = ['sorteos']
+handler.command = /^(setlunes|setmartes|setmiercoles|setjueves|setviernes|setsabado|borrarlunes|borrarmartes|borrarmiercoles|borrarjueves|borrarviernes|borrarsabado|lunes|martes|miercoles|jueves|viernes|sabado|ver)$/i
 handler.group = true
-handler.admin = true
+handler.admin = false // lo controlo manual arriba
 
 export default handler
