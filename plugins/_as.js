@@ -1,69 +1,44 @@
 import axios from 'axios'
-import FormData from 'form-data'
 
 let handler = async (m, { conn, usedPrefix, command }) => {
-    const quoted = m.quoted || m
-    const mime = quoted.mimetype || ""
-    let start = Date.now() // PARA MEDIR TIEMPO
-
-    if (!/image\/(png|jpe?g|webp)/i.test(mime)) {
-        await conn.sendMessage(m.chat, { react: { text: "❌", key: m.key } })
-        return conn.sendMessage(m.chat, {
-            text: `🖼️ Responde a una imagen con *${usedPrefix + command}* para quitar el fondo.`
-        })
-    }
-
-    try {
-        await conn.sendMessage(m.chat, { react: { text: "⏳", key: m.key } })
-
-        const buffer = await quoted.download()
-        const ext = mime.split("/")[1] || "png"
-        const randomName = `bg_${Math.random().toString(36).slice(2)}.${ext}`
-
-        const form = new FormData()
-        form.append("image", buffer, randomName)
-        form.append("format", "png")
-        form.append("model", "v1")
-
-        const headers = {
-            ...form.getHeaders(),
-            accept: "application/json, text/plain, */*",
-            "x-client-version": "web",
-            "x-locale": "en"
-        }
-
-        const res = await axios.post("https://api2.pixelcut.app/image/matte/v1", form, {
-            headers,
-            responseType: "arraybuffer"
-        })
-
-        let time = ((Date.now() - start) / 1000).toFixed(2)
+    let q = m.quoted ? m.quoted : m
+    let mime = (q.msg || q).mimetype || ''
+    let start = Date.now()
+    
+    if (!/image\/(png|jpe?g|webp)/i.test(mime)) 
+        return m.reply(`🖼️ Responde a una imagen con *${usedPrefix + command}*`)
         
-        let caption = `✅ *Fondo eliminado*
-
-⏱️ *Tiempo:* ${time} segundos
-📎 *Formato:* PNG
-🔧 *Modelo:* v1`
-
-        await conn.sendMessage(m.chat, {
-            image: res.data,
-            caption
-        })
-
-        await conn.sendMessage(m.chat, { react: { text: "✅", key: m.key } })
-
+    await m.react('⏳')
+    
+    try {
+        const buffer = await q.download()
+        
+        // Subir a telegra.ph
+        const FormData = (await import('form-data')).default
+        const form = new FormData()
+        form.append('file', buffer, 'img.jpg')
+        const { data: up } = await axios.post('https://telegra.ph/upload', form, { headers: form.getHeaders() })
+        const imgUrl = 'https://telegra.ph' + up[0].src
+        
+        // Quitar fondo con Neoxr
+        const apikey = 'AXTjg9'
+        const { data } = await axios.get(`https://api.neoxr.eu/api/nobg?image=${encodeURIComponent(imgUrl)}&apikey=${apikey}`)
+        
+        if (!data.status) throw data.message
+        
+        let time = ((Date.now() - start) / 1000).toFixed(2)
+        await conn.sendFile(m.chat, data.data.image, 'nobg.png', `✅ *Listo*\n⏱️ *Tiempo:* ${time}s`, m)
+        await m.react('✅')
+        
     } catch (e) {
-        console.error('Error:', e.message)
-        await conn.sendMessage(m.chat, { react: { text: "❌", key: m.key } })
-        await conn.sendMessage(m.chat, {
-            text: `⚠️ Ocurrió un error. La API puede estar saturada, intenta de nuevo.`
-        })
+        await m.react('❌')
+        m.reply(`⚠️ Error: ${e.message}`)
     }
 }
 
-handler.help = ['bgremover']
+handler.help = ['nobg']
 handler.tags = ['tools']
-handler.command = /^bgremover|removebg|nobg$/i
-handler.limit = false
+handler.command = /^(nobg|removebg|rembg)$/i
+handler.limit = true
 
 export default handler
