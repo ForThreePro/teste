@@ -1,34 +1,62 @@
 let db = global.db.data.escalaSorteos = global.db.data.escalaSorteos || {}
 
 let handler = async (m, { conn, isAdmin, command, args, groupMetadata }) => {
-    if (!m.isGroup) return m.reply(`❌ Este comando solo funciona en grupos`)
+    if (!m.isGroup) return m.reply(`❌ Solo en grupos`)
 
     let user = `@${m.sender.split('@')[0]}`
     let chat = db[m.chat] = db[m.chat] || {lunes:[],martes:[],miercoles:[],jueves:[],viernes:[],sabado:[]}
     let dias = ['lunes','martes','miercoles','jueves','viernes','sabado']
     let emoji = {lunes:'🌙', martes:'💼', miercoles:'📊', jueves:'📢', viernes:'🎉', sabado:'🎁'}
+    let participants = groupMetadata.participants
 
     const buscarUsuario = (texto) => {
         if (!texto) return null
         texto = texto.toLowerCase().replace(/[^0-9a-z]/g, '')
         if (m.mentionedJid[0]) return m.mentionedJid[0]
         if (m.quoted?.sender) return m.quoted.sender
-        let porNumero = groupMetadata.participants.find(p => p.id.includes(texto))
+        let porNumero = participants.find(p => p.id.includes(texto))
         if (porNumero) return porNumero.id
-        let porNombre = groupMetadata.participants.find(p => (p.name || p.notify || '').toLowerCase().replace(/[^0-9a-z]/g, '').includes(texto))
+        let porNombre = participants.find(p => (p.name || p.notify || '').toLowerCase().replace(/[^0-9a-z]/g, '').includes(texto))
         if (porNombre) return porNombre.id
         return null
     }
 
-    // =====.setlunes @usuario =====
+    // =====.helpstaff =====
+    if (command === 'helpstaff') {
+        let txt = `🐉 𓆩 *𝗠𝗔𝗡𝗨𝗔𝗟 𝗦𝗛𝗘𝗡𝗟𝗢𝗡𝗚* 𓆪 🐉
+
+.⃟𖥔 ݁. 𖦹˙— ``𝗖𝗢𝗠𝗔𝗡𝗗𝗢𝗦 𝗦𝗧𝗔𝗙`` —˙𖦹.🏆꒷
+
+──愛 *𝗔𝗚𝗥𝗘𝗚𝗔𝗥* ╏ ✅
+✅ ➛.setlunes @usuario
+✅ ➛.setmartes @usuario
+✅ ➛.setmiercoles @usuario
+✅ ➛.setjueves @usuario
+✅ ➛.setviernes @usuario
+✅ ➛.setsabado @usuario
+
+──愛 *𝗩𝗘𝗥* ╏ 👀
+👀 ➛.lunes.martes.miercoles.jueves.viernes.sabado
+
+──愛 *𝗟𝗜𝗠𝗣𝗜𝗔𝗥* ╏ 🗑️
+🗑️ ➛.limpiarlunes.limpiarmartes...etc
+
+──愛 *𝗧𝗔𝗕𝗟𝗔* ╏ 📊
+📊 ➛.tabla
+
+> *"Un verdadero Guerrero Z conoce las reglas"* 💥`
+        return m.reply(txt, m, { mentions: [m.sender] })
+    }
+
+    // =====.set DIA =====
     if (command.startsWith('set')) {
         if (!isAdmin) return m.reply(`🚫 *ACCESO DENEGADO*\nSolo administradores ${user}`, m, { mentions: [m.sender] })
         let dia = command.replace('set','')
         if (!dias.includes(dia)) return
 
         let who = buscarUsuario(args.join(' '))
-        if (!who) return m.reply(`❌ *ERROR*\n${user} Menciona o escribe el nombre\n💡 *Ejemplo:*.set${dia} @usuario`, m, { mentions: [m.sender] })
-        if (chat[dia].includes(who)) return m.reply(`⚠️ *YA ESTA EN LA ESCALA*\n${user} @${who.split('@')[0]} ya fue registrado`, m, { mentions: [m.sender, who] })
+        if (!who) return m.reply(`❌ *ERROR*\n${user} Menciona o escribe el nombre\n💡 *Ej:*.set${dia} @usuario`, m, { mentions: [m.sender] })
+        if (chat[dia].includes(who)) return m.reply(`⚠️ *YA ESTA*\n${user} @${who.split('@')[0]} ya fue registrado`, m, { mentions: [m.sender, who] })
 
         chat[dia].push(who)
 
@@ -49,10 +77,10 @@ ${emoji[dia]} ➛ Posición: #${chat[dia].length}
         return conn.reply(m.chat, txt, m, { mentions: [m.sender, who] })
     }
 
-    // =====.lunes =====
+    // =====.DIA =====
     if (dias.includes(command)) {
         let dia = command
-        if (chat[dia].length === 0) return m.reply(`📭 *ESCALA VACÍA*\n${user}\nNo hay guerreros asignados para *${dia.toUpperCase()}*`, m, { mentions: [m.sender] })
+        if (chat[dia].length === 0) return m.reply(`📭 *ESCALA VACÍA*\n${user}\nNo hay guerreros para *${dia.toUpperCase()}*`, m, { mentions: [m.sender] })
 
         let txt = `🐉 𓆩 *𝗘𝗦𝗖𝗔𝗟𝗔 ${dia.toUpperCase()}* 𓆪 🐉
 
@@ -72,7 +100,7 @@ ${emoji[dia]} ➛ Posición: #${chat[dia].length}
         return conn.reply(m.chat, txt, m, { mentions: [...new Set(mentions)] })
     }
 
-    // =====.limpiarlunes =====
+    // =====.limpiar DIA =====
     if (command.startsWith('limpiar')) {
         if (!isAdmin) return m.reply(`🚫 *ACCESO DENEGADO*\nSolo administradores ${user}`, m, { mentions: [m.sender] })
         let dia = command.replace('limpiar','')
@@ -85,7 +113,7 @@ ${emoji[dia]} ➛ Posición: #${chat[dia].length}
 
 .⃟𖥔 ݁. 𖦹˙— ``𝗘𝗦𝗖𝗔𝗟𝗔 𝗕𝗢𝗥𝗔𝗗𝗔`` —˙𖦹.🏆꒷
 
-──愛 *𝗗𝗘𝗧𝗔𝗟𝗟𝗘𝗦* ╏ 🗑️
+──愛 *𝗗𝗘𝗧𝗔𝗟𝗘𝗦* ╏ 🗑️
 🗑️ ➛ Día: *${dia.toUpperCase()}*
 🗑️ ➛ Eliminados: ${cantidad} guerreros
 
@@ -117,18 +145,18 @@ ${emoji[dia]} ➛ Posición: #${chat[dia].length}
                     mentions.push(jid)
                 })
             } else {
-                txt += `${emoji[d]} ➛ *Sin guerreros asignados*\n`
+                txt += `${emoji[d]} ➛ *Sin guerreros*\n`
             }
         })
 
-        txt += `\n> *"7 días, 7 guerreros, 1 solo ganador"* 💥`
+        txt += `\n> *"7 días, 7 guerreros"* 💥`
 
         return conn.reply(m.chat, txt, m, { mentions: [...new Set(mentions)] })
     }
 
 }
-handler.help = ['setlunes @', 'lunes', 'limpiarlunes', 'tabla']
+handler.help = ['helpstaff', 'setlunes @', 'lunes', 'limpiarlunes', 'tabla']
 handler.tags = ['staff']
-handler.command = ['setlunes','setmartes','setmiercoles','setjueves','setviernes','setsabado','lunes','martes','miercoles','jueves','viernes','sabado','limpiarlunes','limpiarmartes','limpiarmiercoles','limpiarjueves','limpiarviernes','limpiarsabado','tabla']
+handler.command = ['helpstaff','setlunes','setmartes','setmiercoles','setjueves','setviernes','setsabado','lunes','martes','miercoles','jueves','viernes','sabado','limpiarlunes','limpiarmartes','limpiarmiercoles','limpiarjueves','limpiarviernes','limpiarsabado','tabla']
 handler.group = true
 export default handler
