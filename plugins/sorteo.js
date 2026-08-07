@@ -1,6 +1,6 @@
 let db = global.db.data.escalaSorteos = global.db.data.escalaSorteos || {}
 
-let handler = async (m, { conn, isAdmin, command, args, groupMetadata }) => {
+let handler = async (m, { conn, isAdmin, command, args, groupMetadata, text }) => {
     if (!m.isGroup) return m.reply(`❌ Solo en grupos`)
 
     let user = `@${m.sender.split('@')[0]}`
@@ -28,30 +28,17 @@ let handler = async (m, { conn, isAdmin, command, args, groupMetadata }) => {
 ┌─ *AGREGAR STAFF* ─┐
 │ ✅.setlunes @usuario │
 │ ✅.setmartes @usuario │
-│ ✅.setmiercoles @usuario │
-│ ✅.setjueves @usuario │
-│ ✅.setviernes @usuario │
-│ ✅.setsabado @usuario │
 └───────────────────┘
 💡 *TIP:* Puedes poner varios @ juntos
 Ej:.setlunes @pepito @maria @ana
 
 ┌─ *VER ESCALA* ─┐
-│ 👀.lunes │
-│ 👀.martes │
-│ 👀.miercoles │
-│ 👀.jueves │
-│ 👀.viernes │
-│ 👀.sabado │
+│ 👀.lunes.martes.miercoles │
+│ 👀.jueves.viernes.sabado │
 └────────────────┘
 
 ┌─ *LIMPIAR DIA* ─┐
-│ 🗑️.limpiarlunes │
-│ 🗑️.limpiarmartes │
-│ 🗑️.limpiarmiercoles │
-│ 🗑️.limpiarjueves │
-│ 🗑️.limpiarviernes │
-│ 🗑️.limpiarsabado │
+│ 🗑️.limpiarlunes...hasta sabado │
 └──────────────────┘
 
 ┌─ *OTROS* ─┐
@@ -65,28 +52,34 @@ Ej:.setlunes @pepito @maria @ana
         return m.reply(txt, m, { mentions: [m.sender] })
     }
 
-    // =====.set DIA @ ===== AHORA ACEPTA VARIOS
+    // =====.set DIA @ ===== AHORA LEE VARIOS @ DEL TEXTO
     if (command.startsWith('set')) {
         if (!isAdmin) return m.reply(`🚫 *ACCESO DENEGADO*\nSolo administradores ${user}`, m, { mentions: [m.sender] })
         let dia = command.replace('set','')
         if (!dias.includes(dia)) return
 
-        // AGARRA TODOS LOS @ MENCIONADOS
-        let targets = []
+        let targets = new Set()
+
+        // 1. Agarra todos los @ mencionados oficiales
         if(m.mentionedJid.length > 0){
-            targets = m.mentionedJid
-        } else {
-            // Si escriben nombre/numero sin @
-            let who = buscarUsuario(args.join(' '))
-            if(who) targets.push(who)
+            m.mentionedJid.forEach(jid => targets.add(jid))
         }
 
-        if (targets.length === 0) return m.reply(`❌ *ERROR*\n${user} Menciona a los usuarios\n💡 *Ejemplo:*.set${dia} @pepito @maria @ana`, m, { mentions: [m.sender] })
+        // 2. Si no hay, busca @ en el texto y nombres
+        let palabras = text.split(' ').slice(1) // quita el.setlunes
+        palabras.forEach(p => {
+            p = p.replace('@','')
+            let jid = buscarUsuario(p)
+            if(jid) targets.add(jid)
+        })
 
+        if (targets.size === 0) return m.reply(`❌ *ERROR*\n${user} Menciona a los usuarios\n💡 *Ejemplo:*.set${dia} @pepito @maria @ana`, m, { mentions: [m.sender] })
+
+        let targetsArray = [...targets]
         let agregados = []
         let yaEstaban = []
 
-        targets.forEach(who => {
+        targetsArray.forEach(who => {
             if (chat[dia].includes(who)) {
                 yaEstaban.push(who)
             } else {
@@ -95,7 +88,7 @@ Ej:.setlunes @pepito @maria @ana
             }
         })
 
-        if(agregados.length === 0) return m.reply(`⚠️ *NADIE NUEVO*\n${user} Todos ya estaban en la escala de *${dia.toUpperCase()}*`, m, { mentions: [m.sender,...targets] })
+        if(agregados.length === 0) return m.reply(`⚠️ *NADIE NUEVO*\n${user} Todos ya estaban en la escala de *${dia.toUpperCase()}*`, m, { mentions: [m.sender,...targetsArray] })
 
         let txt = `🐉 ━━━━━━━━ *REGISTRO SHENLONG* ━━━━━━━━ 🐉
 
