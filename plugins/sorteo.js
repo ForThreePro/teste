@@ -12,8 +12,6 @@ let handler = async (m, { conn, isAdmin, command, args, groupMetadata }) => {
     const buscarUsuario = (texto) => {
         if (!texto) return null
         texto = texto.toLowerCase().replace(/[^0-9a-z]/g, '')
-        if (m.mentionedJid[0]) return m.mentionedJid[0]
-        if (m.quoted?.sender) return m.quoted.sender
         let porNumero = participants.find(p => p.id.includes(texto))
         if (porNumero) return porNumero.id
         let porNombre = participants.find(p => (p.name || p.notify || '').toLowerCase().replace(/[^0-9a-z]/g, '').includes(texto))
@@ -21,32 +19,105 @@ let handler = async (m, { conn, isAdmin, command, args, groupMetadata }) => {
         return null
     }
 
-    // =====.setlunes @usuario =====
+    // =====.helpstaff =====
+    if (command === 'helpstaff') {
+        let txt = `🐉 ━━━━━━━━ *MANUAL SHENLONG* ━━━━━━━━ 🐉
+
+📖 *COMANDOS DE ESCALA STAFF* 📖
+
+┌─ *AGREGAR STAFF* ─┐
+│ ✅.setlunes @usuario │
+│ ✅.setmartes @usuario │
+│ ✅.setmiercoles @usuario │
+│ ✅.setjueves @usuario │
+│ ✅.setviernes @usuario │
+│ ✅.setsabado @usuario │
+└───────────────────┘
+💡 *TIP:* Puedes poner varios @ juntos
+Ej:.setlunes @pepito @maria @ana
+
+┌─ *VER ESCALA* ─┐
+│ 👀.lunes │
+│ 👀.martes │
+│ 👀.miercoles │
+│ 👀.jueves │
+│ 👀.viernes │
+│ 👀.sabado │
+└────────────────┘
+
+┌─ *LIMPIAR DIA* ─┐
+│ 🗑️.limpiarlunes │
+│ 🗑️.limpiarmartes │
+│ 🗑️.limpiarmiercoles │
+│ 🗑️.limpiarjueves │
+│ 🗑️.limpiarviernes │
+│ 🗑️.limpiarsabado │
+└──────────────────┘
+
+┌─ *OTROS* ─┐
+│ 📊.tabla │
+│ ❓.helpstaff │
+└────────────┘
+
+*NOTA:* Solo admins pueden agregar y limpiar
+> "Un verdadero Guerrero Z conoce las reglas" 💥`
+
+        return m.reply(txt, m, { mentions: [m.sender] })
+    }
+
+    // =====.set DIA @ ===== AHORA ACEPTA VARIOS
     if (command.startsWith('set')) {
         if (!isAdmin) return m.reply(`🚫 *ACCESO DENEGADO*\nSolo administradores ${user}`, m, { mentions: [m.sender] })
         let dia = command.replace('set','')
         if (!dias.includes(dia)) return
 
-        let who = buscarUsuario(args.join(' '))
-        if (!who) return m.reply(`❌ *ERROR*\n${user} Menciona o escribe el nombre\n💡 *Ejemplo:*.set${dia} @usuario`, m, { mentions: [m.sender] })
-        if (chat[dia].includes(who)) return m.reply(`⚠️ *YA REGISTRADO*\n${user} @${who.split('@')[0]} ya esta en la escala de *${dia.toUpperCase()}*`, m, { mentions: [m.sender, who] })
+        // AGARRA TODOS LOS @ MENCIONADOS
+        let targets = []
+        if(m.mentionedJid.length > 0){
+            targets = m.mentionedJid
+        } else {
+            // Si escriben nombre/numero sin @
+            let who = buscarUsuario(args.join(' '))
+            if(who) targets.push(who)
+        }
 
-        chat[dia].push(who)
-        let target = `@${who.split('@')[0]}`
+        if (targets.length === 0) return m.reply(`❌ *ERROR*\n${user} Menciona a los usuarios\n💡 *Ejemplo:*.set${dia} @pepito @maria @ana`, m, { mentions: [m.sender] })
+
+        let agregados = []
+        let yaEstaban = []
+
+        targets.forEach(who => {
+            if (chat[dia].includes(who)) {
+                yaEstaban.push(who)
+            } else {
+                chat[dia].push(who)
+                agregados.push(who)
+            }
+        })
+
+        if(agregados.length === 0) return m.reply(`⚠️ *NADIE NUEVO*\n${user} Todos ya estaban en la escala de *${dia.toUpperCase()}*`, m, { mentions: [m.sender,...targets] })
 
         let txt = `🐉 ━━━━━━━━ *REGISTRO SHENLONG* ━━━━━━━━ 🐉
 
-✨ *AGREGADO CON EXITO* ✨
+✨ *AGREGADOS CON EXITO* ✨
 
 ${emoji[dia]} *DIA:* ${dia.toUpperCase()}
-${emoji[dia]} *STAFF:* ${target}
-${emoji[dia]} *POSICION:* #${chat[dia].length}
+${emoji[dia]} *CANTIDAD:* ${agregados.length} guerreros
 
-👮 *REGISTRADO POR:* ${user}
+*LISTA AGREGADA:*
+`
+        agregados.forEach((jid, i) => {
+            txt += `${i+1}. @${jid.split('@')[0]}\n`
+        })
 
-> "El ki de este guerrero ha sido registrado" 💥`
+        if(yaEstaban.length > 0){
+            txt += `\n⚠️ *YA ESTABAN:* ${yaEstaban.length}`
+        }
 
-        return conn.reply(m.chat, txt, m, { mentions: [m.sender, who] })
+        txt += `\n\n👮 *REGISTRADO POR:* ${user}`
+        txt += `\n> "El ki de estos guerreros ha sido registrado" 💥`
+
+        return conn.reply(m.chat, txt, m, { mentions: [m.sender,...agregados,...yaEstaban] })
     }
 
     // =====.lunes =====
@@ -81,7 +152,7 @@ Para poder verificar tu sorteo envia @ a un admin tu sorteo realizado + cap
         return conn.reply(m.chat, txt, m, { mentions: [...new Set(mentions)] })
     }
 
-    // =====.limpiarlunes =====
+    // =====.limpiar DIA =====
     if (command.startsWith('limpiar')) {
         if (!isAdmin) return m.reply(`🚫 *ACCESO DENEGADO*\nSolo administradores ${user}`, m, { mentions: [m.sender] })
         let dia = command.replace('limpiar','')
@@ -135,8 +206,8 @@ ${emoji[dia]} *DIA:* ${dia.toUpperCase()}
     }
 
 }
-handler.help = ['setlunes @', 'lunes', 'limpiarlunes', 'tabla']
+handler.help = ['helpstaff', 'setlunes @', 'lunes', 'limpiarlunes', 'tabla']
 handler.tags = ['staff']
-handler.command = ['setlunes','setmartes','setmiercoles','setjueves','setviernes','setsabado','lunes','martes','miercoles','jueves','viernes','sabado','limpiarlunes','limpiarmartes','limpiarmiercoles','limpiarjueves','limpiarviernes','limpiarsabado','tabla']
+handler.command = ['helpstaff','setlunes','setmartes','setmiercoles','setjueves','setviernes','setsabado','lunes','martes','miercoles','jueves','viernes','sabado','limpiarlunes','limpiarmartes','limpiarmiercoles','limpiarjueves','limpiarviernes','limpiarsabado','tabla']
 handler.group = true
 export default handler
